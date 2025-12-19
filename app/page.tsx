@@ -1,14 +1,36 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useEffect, useState } from "react"
-import { Navigation } from "@/components/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { BarChart3, Package, Factory, Truck, AlertCircle } from "lucide-react"
-import Link from "next/link"
-import type { Order, Production, Inventory, Dispatch } from "@/lib/db"
-import { Progress } from "@/components/ui/progress"
+import { useEffect, useState } from "react";
+import { Navigation } from "@/components/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { StatCard } from "@/components/ui/stat-card";
+import {
+  BarChart3,
+  Package,
+  Factory,
+  Truck,
+  AlertCircle,
+  ShoppingCart,
+  TrendingUp,
+  Clock,
+  CheckCircle2,
+  PackageCheck,
+  RefreshCw,
+} from "lucide-react";
+import Link from "next/link";
+import type { Order, Production, Inventory, Dispatch } from "@/lib/db";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Bar,
   BarChart,
@@ -23,59 +45,61 @@ import {
   Cell,
   Line,
   LineChart,
-} from "recharts"
+} from "recharts";
 
 const COLORS = {
-  hyundai: "#004B91",
-  samsung: "#0066CC",
-  EV: "#0088FE",
-  SUV: "#00C49F",
-  factory1: "#FF8042",
-  factory2: "#FFBB28",
-}
+  hyundai: "rgb(35, 45, 51)", // SEBANG Dark Gray
+  samsung: "rgb(181, 186, 191)", // SEBANG Gray
+  EV: "rgb(0, 170, 156)", // SEBANG Green
+  SUV: "rgb(181, 151, 96)", // SEBANG Gold
+  factory1: "rgb(35, 45, 51)", // SEBANG Dark Gray
+  factory2: "rgb(0, 170, 156)", // SEBANG Green
+};
 
 export default function HomePage() {
-  const [orders, setOrders] = useState<Order[]>([])
-  const [productions, setProductions] = useState<Production[]>([])
-  const [inventory, setInventory] = useState<Inventory[]>([])
-  const [dispatches, setDispatches] = useState<Dispatch[]>([])
-  const [loading, setLoading] = useState(true)
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [productions, setProductions] = useState<Production[]>([]);
+  const [inventory, setInventory] = useState<Inventory[]>([]);
+  const [dispatches, setDispatches] = useState<Dispatch[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    initializeData()
-  }, [])
+    initializeData();
+  }, []);
 
   const initializeData = async () => {
     try {
       // Initialize database
-      await fetch("/api/init")
+      await fetch("/api/init");
 
       // Fetch all data
-      const [ordersRes, productionsRes, inventoryRes, dispatchesRes] = await Promise.all([
-        fetch("/api/orders"),
-        fetch("/api/productions"),
-        fetch("/api/inventory"),
-        fetch("/api/dispatch"),
-      ])
+      const [ordersRes, productionsRes, inventoryRes, dispatchesRes] =
+        await Promise.all([
+          fetch("/api/orders"),
+          fetch("/api/productions"),
+          fetch("/api/inventory"),
+          fetch("/api/dispatch"),
+        ]);
 
-      const [ordersData, productionsData, inventoryData, dispatchesData] = await Promise.all([
-        ordersRes.json(),
-        productionsRes.json(),
-        inventoryRes.json(),
-        dispatchesRes.json(),
-      ])
+      const [ordersData, productionsData, inventoryData, dispatchesData] =
+        await Promise.all([
+          ordersRes.json(),
+          productionsRes.json(),
+          inventoryRes.json(),
+          dispatchesRes.json(),
+        ]);
 
-      if (ordersData.success) setOrders(ordersData.data)
-      if (productionsData.success) setProductions(productionsData.data)
-      if (inventoryData.success) setInventory(inventoryData.data)
-      if (dispatchesData.success) setDispatches(dispatchesData.data)
+      if (ordersData.success) setOrders(ordersData.data);
+      if (productionsData.success) setProductions(productionsData.data);
+      if (inventoryData.success) setInventory(inventoryData.data);
+      if (dispatchesData.success) setDispatches(dispatchesData.data);
 
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
-      console.error("[v0] Failed to initialize:", error)
-      setLoading(false)
+      console.error("[v0] Failed to initialize:", error);
+      setLoading(false);
     }
-  }
+  };
 
   // Calculate statistics
   const stats = {
@@ -83,34 +107,65 @@ export default function HomePage() {
     totalProductions: productions.length,
     totalInventory: inventory.reduce((sum, i) => sum + i.quantity, 0),
     totalDispatch: dispatches.length,
-    pendingOrders: orders.filter((o) => o.status === "confirmed").length,
-    completedProductions: productions.filter((p) => p.status === "inspected").length,
+    pendingOrders: orders.filter(
+      (o) => o.status === "confirmed" || o.status === "predicted"
+    ).length,
+    completedProductions: productions.filter((p) => p.status === "inspected")
+      .length,
     pendingDispatches: dispatches.filter((d) => d.status === "planned").length,
-  }
+    inProgressProductions: productions.filter((p) => p.status === "in_progress")
+      .length,
+    todayOrders: orders.filter((o) => {
+      const today = new Date().toISOString().split("T")[0];
+      return o.orderDate.startsWith(today);
+    }).length,
+    todayProductions: productions.filter((p) => {
+      const today = new Date().toISOString().split("T")[0];
+      return p.productionDate.startsWith(today);
+    }).length,
+  };
+
+  // 전일 대비 계산 (임시 데이터)
+  const trends = {
+    orders: 5.2,
+    productions: 3.8,
+    inventory: -2.1,
+    dispatch: 8.5,
+  };
+
+  const [lastUpdate, setLastUpdate] = useState(new Date());
 
   // Customer share data
   const customerData = [
     {
       name: "현대차",
-      value: orders.filter((o) => o.customer === "현대차").reduce((sum, o) => sum + o.confirmedQuantity, 0),
+      value: orders
+        .filter((o) => o.customer === "현대차")
+        .reduce((sum, o) => sum + o.confirmedQuantity, 0),
     },
     {
       name: "삼성SDI",
-      value: orders.filter((o) => o.customer === "삼성SDI").reduce((sum, o) => sum + o.confirmedQuantity, 0),
+      value: orders
+        .filter((o) => o.customer === "삼성SDI")
+        .reduce((sum, o) => sum + o.confirmedQuantity, 0),
     },
-  ]
+  ];
 
   // Product distribution
   const productData = [
     {
       name: "EV",
-      value: orders.filter((o) => o.product === "EV").reduce((sum, o) => sum + o.confirmedQuantity, 0),
+      value: orders
+        .filter((o) => o.product === "EV")
+        .reduce((sum, o) => sum + o.confirmedQuantity, 0),
     },
     {
       name: "SUV",
-      value: orders.filter((o) => o.product === "SUV").reduce((sum, o) => sum + o.confirmedQuantity, 0),
+      value: orders
+        .filter((o) => o.product === "SUV")
+        .reduce((sum, o) => sum + o.confirmedQuantity, 0),
     },
-  ]
+  ];
 
   // Factory production
   const factoryData = [
@@ -124,24 +179,33 @@ export default function HomePage() {
         .reduce((sum, p) => sum + p.inspectedQuantity, 0),
     },
     {
-      name: "광주2공장",
+      name: "음성공장",
       planned: productions
-        .filter((p) => p.productionLine === "광주2공장")
+        .filter((p) => p.productionLine === "음성공장")
         .reduce((sum, p) => sum + p.plannedQuantity, 0),
       completed: productions
-        .filter((p) => p.productionLine === "광주2공장")
+        .filter((p) => p.productionLine === "음성공장")
         .reduce((sum, p) => sum + p.inspectedQuantity, 0),
     },
-  ]
+  ];
 
   // Monthly trend (last 6 months)
   const monthlyData = (() => {
-    const months = ["2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12"]
+    const months = [
+      "2025-07",
+      "2025-08",
+      "2025-09",
+      "2025-10",
+      "2025-11",
+      "2025-12",
+    ];
     return months.map((month) => ({
       month: month.slice(5),
-      orders: orders.filter((o) => o.orderDate === month).reduce((sum, o) => sum + o.confirmedQuantity, 0),
-    }))
-  })()
+      orders: orders
+        .filter((o) => o.orderDate === month)
+        .reduce((sum, o) => sum + o.confirmedQuantity, 0),
+    }));
+  })();
 
   const quickActions = [
     {
@@ -149,7 +213,7 @@ export default function HomePage() {
       description: "당월 발주 예측 데이터 확인 및 수정",
       icon: BarChart3,
       href: "/orders",
-      color: "text-blue-600",
+      color: "text-[rgb(35,45,51)]", // SEBANG Dark Gray
       alert: stats.pendingOrders > 0 ? `${stats.pendingOrders}건 대기` : null,
     },
     {
@@ -157,18 +221,21 @@ export default function HomePage() {
       description: "발주 승인 및 생산 이관",
       icon: Package,
       href: "/sales",
-      color: "text-green-600",
-      alert: stats.pendingOrders > 0 ? `${stats.pendingOrders}건 승인 필요` : null,
+      color: "text-[rgb(0,170,156)]", // SEBANG Green
+      alert:
+        stats.pendingOrders > 0 ? `${stats.pendingOrders}건 승인 필요` : null,
     },
     {
       title: "생산 계획",
       description: "공장별 생산 수량 입력",
       icon: Factory,
       href: "/production",
-      color: "text-orange-600",
+      color: "text-[rgb(181,151,96)]", // SEBANG Gold
       alert:
         productions.filter((p) => p.status === "planned").length > 0
-          ? `${productions.filter((p) => p.status === "planned").length}건 생산 계획`
+          ? `${
+              productions.filter((p) => p.status === "planned").length
+            }건 생산 계획`
           : null,
     },
     {
@@ -176,110 +243,175 @@ export default function HomePage() {
       description: "출하 계획 및 배차 현황",
       icon: Truck,
       href: "/dispatch",
-      color: "text-purple-600",
-      alert: stats.pendingDispatches > 0 ? `${stats.pendingDispatches}건 대기` : null,
+      color: "text-[rgb(181,186,191)]", // SEBANG Gray
+      alert:
+        stats.pendingDispatches > 0
+          ? `${stats.pendingDispatches}건 대기`
+          : null,
     },
-  ]
+  ];
 
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
         <div className="container mx-auto px-4 py-8">
-          <div className="text-center py-12 text-muted-foreground">데이터를 불러오는 중...</div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+            <StatCard
+              label="총 주문"
+              value={0}
+              icon={<ShoppingCart />}
+              loading={true}
+            />
+            <StatCard
+              label="생산 현황"
+              value={0}
+              icon={<Factory />}
+              loading={true}
+            />
+            <StatCard
+              label="현재 재고"
+              value={0}
+              icon={<Package />}
+              loading={true}
+            />
+            <StatCard
+              label="출하 완료"
+              value={0}
+              icon={<Truck />}
+              loading={true}
+            />
+          </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">세방산업 통합 SCM 시스템</h1>
-          <p className="text-muted-foreground text-lg">발주-생산-출하 관리를 한 곳에서</p>
+      <div className="container mx-auto px-4 py-8 space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-foreground mb-2">
+              세방리튬배터리 SCM 대시보드
+            </h1>
+            <p className="text-muted-foreground text-lg">
+              실시간 발주-생산-출하 통합 관리
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="text-sm text-muted-foreground">
+              마지막 업데이트: {lastUpdate.toLocaleTimeString("ko-KR")}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                initializeData();
+                setLastUpdate(new Date());
+              }}
+            >
+              <RefreshCw className="w-4 h-4 mr-1" />
+              새로고침
+            </Button>
+          </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-4 mb-8">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardDescription>총 발주 건수</CardDescription>
-              <CardTitle className="text-3xl">{stats.totalOrders}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">2024-2025 누적</p>
-              <Progress
-                value={(stats.totalOrders / 100) * 100}
-                className="h-2 mt-2"
-                style={
-                  {
-                    "--progress-background": "oklch(0.35 0.15 250)",
-                  } as React.CSSProperties
-                }
-              />
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardDescription>생산 완료 건수</CardDescription>
-              <CardTitle className="text-3xl">{stats.completedProductions}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">검수 완료 기준</p>
-              <Progress
-                value={(stats.completedProductions / stats.totalProductions) * 100}
-                className="h-2 mt-2"
-                style={
-                  {
-                    "--progress-background": "oklch(0.6 0.12 200)",
-                  } as React.CSSProperties
-                }
-              />
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardDescription>현재 재고</CardDescription>
-              <CardTitle className="text-3xl">{stats.totalInventory.toLocaleString()}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">총 보유 수량</p>
-              <div className="flex gap-2 mt-2">
-                {inventory.map((inv) => (
-                  <div key={inv.id} className="text-xs bg-secondary px-2 py-1 rounded">
-                    {inv.product}: {inv.quantity}
+        {/* KPI Cards */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            label="총 주문"
+            value={stats.totalOrders}
+            icon={<ShoppingCart />}
+            trend={{ value: trends.orders, direction: "up" }}
+            variant="info"
+            suffix="건"
+            description={`승인 대기: ${stats.pendingOrders}건`}
+            highlight={stats.pendingOrders > 0}
+          />
+          <StatCard
+            label="생산 현황"
+            value={stats.completedProductions}
+            icon={<Factory />}
+            trend={{ value: trends.productions, direction: "up" }}
+            variant="warning"
+            suffix="건"
+            description={`진행중: ${stats.inProgressProductions}건`}
+          />
+          <StatCard
+            label="현재 재고"
+            value={stats.totalInventory}
+            icon={<Package />}
+            trend={{ value: Math.abs(trends.inventory), direction: "down" }}
+            variant="success"
+            suffix="대"
+            description="총 보유 수량"
+          />
+          <StatCard
+            label="출하 완료"
+            value={stats.totalDispatch}
+            icon={<PackageCheck />}
+            trend={{ value: trends.dispatch, direction: "up" }}
+            variant="default"
+            suffix="건"
+            description={`대기: ${stats.pendingDispatches}건`}
+          />
+        </div>
+
+        {/* Alert Section */}
+        {(stats.pendingOrders > 0 || stats.inProgressProductions > 0) && (
+          <Card className="border-[rgb(181,151,96)] bg-[rgb(245,241,232)]">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-[rgb(181,151,96)] mt-0.5" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-[rgb(181,151,96)] mb-2">
+                    처리 필요 항목
+                  </h3>
+                  <div className="space-y-1 text-sm text-[rgb(35,45,51)]">
+                    {stats.pendingOrders > 0 && (
+                      <div className="flex items-center justify-between">
+                        <span>• 승인 대기 주문: {stats.pendingOrders}건</span>
+                        <Link href="/sales">
+                          <Button size="sm" variant="outline" className="h-7">
+                            확인하기
+                          </Button>
+                        </Link>
+                      </div>
+                    )}
+                    {stats.inProgressProductions > 0 && (
+                      <div className="flex items-center justify-between">
+                        <span>
+                          • 생산 진행중: {stats.inProgressProductions}건
+                        </span>
+                        <Link href="/production">
+                          <Button size="sm" variant="outline" className="h-7">
+                            확인하기
+                          </Button>
+                        </Link>
+                      </div>
+                    )}
                   </div>
-                ))}
+                </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardDescription>배차 완료</CardDescription>
-              <CardTitle className="text-3xl">{stats.totalDispatch}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">총 배차 건수</p>
-              <Progress
-                value={(stats.totalDispatch / (stats.totalDispatch + 10)) * 100}
-                className="h-2 mt-2"
-                style={
-                  {
-                    "--progress-background": "oklch(0.65 0.18 150)",
-                  } as React.CSSProperties
-                }
-              />
-            </CardContent>
-          </Card>
-        </div>
+        )}
 
-        <div className="grid gap-6 lg:grid-cols-2 mb-8">
-          <Card>
+        {/* Charts Section */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Card className="card-hover">
             <CardHeader>
-              <CardTitle>발주사별 점유율</CardTitle>
-              <CardDescription>확정 수량 기준</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>발주사별 점유율</CardTitle>
+                  <CardDescription>확정 수량 기준</CardDescription>
+                </div>
+                <Badge variant="info">실시간</Badge>
+              </div>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -290,11 +422,16 @@ export default function HomePage() {
                     cy="50%"
                     labelLine={false}
                     label={(entry) =>
-                      `${entry.name}: ${((entry.value / customerData.reduce((s, d) => s + d.value, 0)) * 100).toFixed(1)}%`
+                      `${entry.name}: ${(
+                        (entry.value /
+                          customerData.reduce((s, d) => s + d.value, 0)) *
+                        100
+                      ).toFixed(1)}%`
                     }
-                    outerRadius={80}
+                    outerRadius={90}
                     fill="#8884d8"
                     dataKey="value"
+                    animationDuration={800}
                   >
                     <Cell fill={COLORS.hyundai} />
                     <Cell fill={COLORS.samsung} />
@@ -302,13 +439,37 @@ export default function HomePage() {
                   <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                {customerData.map((item, index) => (
+                  <div key={item.name} className="flex items-center gap-2">
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{
+                        backgroundColor:
+                          index === 0 ? COLORS.hyundai : COLORS.samsung,
+                      }}
+                    />
+                    <div className="text-sm">
+                      <div className="font-medium">{item.name}</div>
+                      <div className="text-muted-foreground">
+                        {item.value.toLocaleString()}대
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="card-hover">
             <CardHeader>
-              <CardTitle>품목별 분포</CardTitle>
-              <CardDescription>발주 수량 기준</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>품목별 분포</CardTitle>
+                  <CardDescription>발주 수량 기준</CardDescription>
+                </div>
+                <Badge variant="info">실시간</Badge>
+              </div>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -319,11 +480,16 @@ export default function HomePage() {
                     cy="50%"
                     labelLine={false}
                     label={(entry) =>
-                      `${entry.name}: ${((entry.value / productData.reduce((s, d) => s + d.value, 0)) * 100).toFixed(1)}%`
+                      `${entry.name}: ${(
+                        (entry.value /
+                          productData.reduce((s, d) => s + d.value, 0)) *
+                        100
+                      ).toFixed(1)}%`
                     }
-                    outerRadius={80}
+                    outerRadius={90}
                     fill="#8884d8"
                     dataKey="value"
+                    animationDuration={800}
                   >
                     <Cell fill={COLORS.EV} />
                     <Cell fill={COLORS.SUV} />
@@ -331,103 +497,214 @@ export default function HomePage() {
                   <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                {productData.map((item, index) => (
+                  <div key={item.name} className="flex items-center gap-2">
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{
+                        backgroundColor: index === 0 ? COLORS.EV : COLORS.SUV,
+                      }}
+                    />
+                    <div className="text-sm">
+                      <div className="font-medium">{item.name}</div>
+                      <div className="text-muted-foreground">
+                        {item.value.toLocaleString()}대
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="card-hover">
             <CardHeader>
-              <CardTitle>공장별 생산 현황</CardTitle>
-              <CardDescription>계획 대비 실적</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>공장별 생산 현황</CardTitle>
+                  <CardDescription>계획 대비 실적</CardDescription>
+                </div>
+                <Badge variant="warning">생산중</Badge>
+              </div>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={factoryData}>
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <Tooltip />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "white",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "8px",
+                    }}
+                  />
                   <Legend />
-                  <Bar dataKey="planned" fill={COLORS.factory1} name="계획수량" />
-                  <Bar dataKey="completed" fill={COLORS.factory2} name="완료수량" />
+                  <Bar
+                    dataKey="planned"
+                    fill={COLORS.factory1}
+                    name="계획수량"
+                    radius={[8, 8, 0, 0]}
+                    animationDuration={800}
+                  />
+                  <Bar
+                    dataKey="completed"
+                    fill={COLORS.factory2}
+                    name="완료수량"
+                    radius={[8, 8, 0, 0]}
+                    animationDuration={800}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="card-hover">
             <CardHeader>
-              <CardTitle>월별 발주 추이</CardTitle>
-              <CardDescription>최근 6개월</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>월별 발주 추이</CardTitle>
+                  <CardDescription>최근 6개월</CardDescription>
+                </div>
+                <Badge variant="success">
+                  <TrendingUp className="w-3 h-3 mr-1" />
+                  증가세
+                </Badge>
+              </div>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={monthlyData}>
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "white",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "8px",
+                    }}
+                  />
                   <Legend />
-                  <Line type="monotone" dataKey="orders" stroke={COLORS.hyundai} name="발주수량" strokeWidth={2} />
+                  <Line
+                    type="monotone"
+                    dataKey="orders"
+                    stroke={COLORS.hyundai}
+                    name="발주수량"
+                    strokeWidth={3}
+                    dot={{ fill: COLORS.hyundai, r: 5 }}
+                    activeDot={{ r: 7 }}
+                    animationDuration={800}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
         </div>
 
-        <div className="mb-6">
+        {/* Quick Actions */}
+        <div>
           <h2 className="text-2xl font-bold mb-4">빠른 작업</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {quickActions.map((action) => {
-              const Icon = action.icon
+              const Icon = action.icon;
               return (
                 <Link key={action.href} href={action.href}>
-                  <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full relative">
+                  <Card className="hover-lift cursor-pointer h-full relative group">
                     {action.alert && (
-                      <div className="absolute top-3 right-3">
-                        <div className="flex items-center gap-1 bg-destructive text-destructive-foreground px-2 py-1 rounded-full text-xs font-medium">
-                          <AlertCircle className="w-3 h-3" />
+                      <div className="absolute top-3 right-3 z-10">
+                        <Badge variant="error" className="pulse-subtle">
+                          <AlertCircle className="w-3 h-3 mr-1" />
                           {action.alert}
-                        </div>
+                        </Badge>
                       </div>
                     )}
                     <CardHeader>
-                      <Icon className={`w-8 h-8 ${action.color} mb-2`} />
+                      <div
+                        className={cn(
+                          "w-12 h-12 rounded-lg flex items-center justify-center mb-3 transition-transform group-hover:scale-110",
+                          action.color === "text-[rgb(35,45,51)]" &&
+                            "bg-[rgb(240,242,243)]",
+                          action.color === "text-[rgb(0,170,156)]" &&
+                            "bg-[rgb(230,248,246)]",
+                          action.color === "text-[rgb(181,151,96)]" &&
+                            "bg-[rgb(245,241,232)]",
+                          action.color === "text-[rgb(181,186,191)]" &&
+                            "bg-[rgb(230,230,230)]"
+                        )}
+                      >
+                        <Icon className={`w-6 h-6 ${action.color}`} />
+                      </div>
                       <CardTitle className="text-lg">{action.title}</CardTitle>
                       <CardDescription>{action.description}</CardDescription>
                     </CardHeader>
                   </Card>
                 </Link>
-              )
+              );
             })}
           </div>
         </div>
 
+        {/* System Guide */}
         <Card>
           <CardHeader>
-            <CardTitle>시스템 안내</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <div className="w-1 h-6 bg-primary rounded-full" />
+              시스템 안내
+            </CardTitle>
+            <CardDescription>
+              역할별 주요 업무 및 시스템 사용 가이드
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="border-l-4 border-primary pl-4">
-              <h3 className="font-semibold mb-1">발주사 (현대차, 삼성SDI)</h3>
-              <p className="text-sm text-muted-foreground">
-                발주 계획 화면에서 예측 데이터를 확인하고 수정하여 최종 발주를 확정합니다.
-              </p>
-            </div>
-            <div className="border-l-4 border-green-600 pl-4">
-              <h3 className="font-semibold mb-1">창고관리자</h3>
-              <p className="text-sm text-muted-foreground">
-                판매 계획에서 발주를 승인하고, 출하 계획과 배차 관리를 수행합니다.
-              </p>
-            </div>
-            <div className="border-l-4 border-orange-600 pl-4">
-              <h3 className="font-semibold mb-1">생산관리자</h3>
-              <p className="text-sm text-muted-foreground">
-                생산 계획 화면에서 광주1공장/2공장별 일자별 입고 수량을 입력합니다.
-              </p>
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="p-4 rounded-lg border-2 border-[rgb(35,45,51)] bg-[rgb(240,242,243)]">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-full bg-[rgb(35,45,51)] flex items-center justify-center text-white font-bold text-sm">
+                    영
+                  </div>
+                  <h3 className="font-semibold text-[rgb(35,45,51)]">
+                    영업담당자
+                  </h3>
+                </div>
+                <p className="text-sm text-[rgb(35,45,51)]">
+                  SRM 연동, 주문 접수, 판매 계획 승인 및 생산 이관
+                </p>
+              </div>
+
+              <div className="p-4 rounded-lg border-2 border-[rgb(181,151,96)] bg-[rgb(245,241,232)]">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-full bg-[rgb(181,151,96)] flex items-center justify-center text-white font-bold text-sm">
+                    생
+                  </div>
+                  <h3 className="font-semibold text-[rgb(181,151,96)]">
+                    생산관리자
+                  </h3>
+                </div>
+                <p className="text-sm text-[rgb(35,45,51)]">
+                  생산 계획 수립, 공장별 생산 관리, 자재 구매 요청
+                </p>
+              </div>
+
+              <div className="p-4 rounded-lg border-2 border-[rgb(0,170,156)] bg-[rgb(230,248,246)]">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-full bg-[rgb(0,170,156)] flex items-center justify-center text-white font-bold text-sm">
+                    창
+                  </div>
+                  <h3 className="font-semibold text-[rgb(0,170,156)]">
+                    창고관리자
+                  </h3>
+                </div>
+                <p className="text-sm text-[rgb(35,45,51)]">
+                  재고 관리, 출하 계획 수립, 배차 관리 및 배송 추적
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 }

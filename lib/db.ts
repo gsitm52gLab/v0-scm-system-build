@@ -20,17 +20,31 @@ export interface Order {
   specialNotes?: string
   createdAt: string
   updatedAt: string
+  // SRM 연동 정보
+  srmOrderNumber?: string // SRM 시스템 주문번호
+  srmSyncDate?: string // SRM에서 가져온 날짜
+  srmSyncBy?: string // 동기화 수행자 (세방 담당자)
+  srmStatus?: "pending" | "synced" | "modified" // SRM 동기화 상태
+  srmLastModified?: string // SRM 마지막 수정일
+  // SAP 연동 정보
+  sapSyncStatus?: "pending" | "synced" // SAP 연동 상태
+  sapSyncDate?: string // SAP 연동 날짜
+  sapSyncBy?: string // SAP 연동 수행자
 }
 
 export interface Production {
   id: string
   orderId: string
-  productionLine: "광주1공장" | "광주2공장"
+  productionLine: "광주1공장" | "음성공장"
   plannedQuantity: number
   inspectedQuantity: number
   productionDate: string
-  status: "planned" | "completed" | "inspected"
+  status: "planned" | "in_progress" | "completed" | "inspected"
   createdAt: string
+  // SAP 연동 정보
+  sapSyncStatus?: "pending" | "synced" // SAP 연동 상태
+  sapSyncDate?: string // SAP 연동 날짜
+  sapSyncBy?: string // SAP 연동 수행자
 }
 
 export interface Inventory {
@@ -87,6 +101,25 @@ export interface MaterialRequirement {
   orderDate?: string
   expectedArrivalDate?: string
   createdAt: string
+}
+
+export interface PurchaseOrder {
+  id: string
+  orderNumber: string
+  materialCode: string
+  materialName: string
+  supplier: string
+  quantity: number
+  unitPrice: number
+  totalAmount: number
+  orderDate: string
+  expectedDeliveryDate: string
+  actualDeliveryDate?: string
+  status: "pending" | "approved" | "ordered" | "delivered" | "cancelled"
+  requestedBy: string
+  approvedBy?: string
+  createdAt: string
+  updatedAt: string
 }
 
 // Generate sample data for 2024-01 to 2025-12
@@ -212,7 +245,7 @@ export function generateSampleProductions(orders: Order[]): Production[] {
   let prodId = 1
 
   approvedOrders.forEach((order) => {
-    const productionLine = order.category === "EV" ? "광주1공장" : "광주2공장"
+    const productionLine = order.category === "EV" ? "광주1공장" : "음성공장"
     const plannedQuantity = order.confirmedQuantity
     const inspectedQuantity = plannedQuantity - Math.floor(Math.random() * 10)
 
@@ -285,6 +318,7 @@ const inventoryData: Inventory[] = []
 const dispatchData: Dispatch[] = []
 const materialsData: Material[] = []
 const materialRequirementsData: MaterialRequirement[] = []
+const purchaseOrdersData: PurchaseOrder[] = []
 
 const leadTimes = {
   ESS: 45, // 45 days for ESS
@@ -500,6 +534,30 @@ export const db = {
         return materialRequirementsData[index]
       }
       return null
+    },
+  },
+  purchaseOrders: {
+    getAll: () => purchaseOrdersData,
+    getById: (id: string) => purchaseOrdersData.find((po) => po.id === id),
+    create: (order: PurchaseOrder) => {
+      purchaseOrdersData.push(order)
+      return order
+    },
+    update: (id: string, data: Partial<PurchaseOrder>) => {
+      const index = purchaseOrdersData.findIndex((po) => po.id === id)
+      if (index !== -1) {
+        purchaseOrdersData[index] = { ...purchaseOrdersData[index], ...data, updatedAt: new Date().toISOString() }
+        return purchaseOrdersData[index]
+      }
+      return null
+    },
+    delete: (id: string) => {
+      const index = purchaseOrdersData.findIndex((po) => po.id === id)
+      if (index !== -1) {
+        purchaseOrdersData.splice(index, 1)
+        return true
+      }
+      return false
     },
   },
 }

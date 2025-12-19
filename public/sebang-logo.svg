@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 80" fill="none">
+  <style>
+    .sebang-text {
+      font-family: 'Arial Black', sans-serif;
+      font-weight: 900;
+      font-size: 42px;
+      fill: #2C495F;
+      letter-spacing: -2px;
+    }
+    .korean-text {
+      font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      fill: #2C495F;
+      letter-spacing: 1px;
+    }
+  </style>
+  
+  <!-- SEBANG 로고 (기울임 효과) -->
+  <g transform="skewX(-8)">
+    <text x="10" y="35" class="sebang-text">SEBANG</text>
+  </g>
+  
+  <!-- 세방리튬배터리 한글 텍스트 -->
+  <text x="10" y="60" class="korean-text">세방리튬배터리</text>
+</svg>
+
