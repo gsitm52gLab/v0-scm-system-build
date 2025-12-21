@@ -7,6 +7,7 @@ import { ClipboardList, Package, Factory, Truck, BarChart3, LogOut, User, Boxes 
 import { useAuth } from "@/components/auth-provider"
 import { Button } from "@/components/ui/button"
 import { canAccessPage } from "@/lib/auth"
+import Image from "next/image"
 
 export function Navigation() {
   const pathname = usePathname()
@@ -37,13 +38,13 @@ export function Navigation() {
       <aside className="w-64 border-r border-border bg-card flex flex-col">
         <div className="p-6 border-b border-border">
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded flex items-center justify-center text-primary-foreground font-bold text-lg">
-              S
-            </div>
-            <div>
-              <span className="font-bold text-lg block">세방리튬배터리</span>
-              <span className="text-xs text-muted-foreground">SCM 시스템</span>
-            </div>
+            <Image
+              src="/images/image.png"
+              alt="SEBANG 세방리튬배터리"
+              width={180}
+              height={60}
+              className="h-12 w-auto"
+            />
           </Link>
         </div>
 
