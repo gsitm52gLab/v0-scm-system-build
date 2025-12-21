@@ -67,6 +67,25 @@ export interface Dispatch {
   createdAt: string
 }
 
+export interface Shipment {
+  id: string
+  shipmentNumber: string
+  customer: string
+  destination: string
+  shipmentDate: string
+  products: {
+    productCode: string
+    product: string
+    category: ProductCategory
+    quantity: number
+  }[]
+  totalAmount: number
+  status: "registered" | "dispatched" | "completed"
+  dispatchId?: string
+  dispatchInfo?: Dispatch
+  createdAt: string
+}
+
 export interface Material {
   id: string
   code: string
@@ -599,6 +618,7 @@ let productionsData: Production[] = []
 let materialsData: Material[] = []
 let inventoryData: Inventory[] = []
 let dispatchData: Dispatch[] = []
+const shipmentData: Shipment[] = []
 
 export function initializeDatabase() {
   if (ordersData.length === 0) {
@@ -626,6 +646,7 @@ export function initializeDatabase() {
     dispatch: dispatchData,
     materials: materialsData,
     bom: bomData,
+    shipments: shipmentData,
   }
 }
 
@@ -707,6 +728,23 @@ export const db = {
       if (index !== -1) {
         dispatchData[index] = { ...dispatchData[index], ...data }
         return dispatchData[index]
+      }
+      return null
+    },
+  },
+  shipments: {
+    getAll: () => shipmentData,
+    getById: (id: string) => shipmentData.find((s) => s.id === id),
+    getByDispatchId: (dispatchId: string) => shipmentData.filter((s) => s.dispatchId === dispatchId),
+    create: (shipment: Shipment) => {
+      shipmentData.push(shipment)
+      return shipment
+    },
+    update: (id: string, data: Partial<Shipment>) => {
+      const index = shipmentData.findIndex((s) => s.id === id)
+      if (index !== -1) {
+        shipmentData[index] = { ...shipmentData[index], ...data }
+        return shipmentData[index]
       }
       return null
     },

@@ -25,6 +25,7 @@ export function Navigation() {
     { href: "/production", label: "생산 계획", icon: Factory, role: "생산관리자" },
     { href: "/production-performance", label: "생산 실적", icon: BarChart3, role: "생산관리자" },
     { href: "/materials", label: "자재 관리", icon: Boxes, role: "자재관리자" },
+    { href: "/shipments", label: "출하 지시", icon: Package, role: "창고관리자" },
     { href: "/dispatch", label: "배차 관리", icon: Truck, role: "창고관리자" },
   ]
 
