@@ -40,7 +40,7 @@ export function Navigation() {
               S
             </div>
             <div>
-              <span className="font-bold text-lg block">세방산업</span>
+              <span className="font-bold text-lg block">세방리튬배터리</span>
               <span className="text-xs text-muted-foreground">SCM 시스템</span>
             </div>
           </Link>
