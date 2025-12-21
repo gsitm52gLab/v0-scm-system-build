@@ -48,7 +48,7 @@ export default function LoginPage() {
           <div className="mx-auto mb-4 w-16 h-16 bg-primary rounded-lg flex items-center justify-center">
             <span className="text-3xl font-bold text-primary-foreground">S</span>
           </div>
-          <CardTitle className="text-2xl">세방산업 SCM 시스템</CardTitle>
+          <CardTitle className="text-2xl">세방리튬배터리 SCM 시스템</CardTitle>
           <CardDescription>통합 공급망 관리 시스템</CardDescription>
         </CardHeader>
 
