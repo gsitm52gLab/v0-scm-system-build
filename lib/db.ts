@@ -107,7 +107,10 @@ export function generateSampleOrders(): Order[] {
 
   for (let d = new Date(startDate); d <= endDate; d.setMonth(d.getMonth() + 1)) {
     const yearMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
-    const isHistorical = d < new Date("2025-12-01")
+    const currentMonth = new Date("2025-12-01")
+    const isHistorical = d < new Date("2025-11-01")
+    const isCurrentMonth = yearMonth === "2025-12"
+    const isNextMonth = yearMonth > "2025-12"
     const orderDate = new Date(yearMonth + "-15")
 
     // ESS orders
@@ -117,6 +120,17 @@ export function generateSampleOrders(): Order[] {
     const essDeliveryDate = new Date(orderDate)
     essDeliveryDate.setDate(essDeliveryDate.getDate() + essLeadTime)
 
+    let status: Order["status"]
+    if (isHistorical) {
+      const rand = Math.random()
+      status = rand > 0.7 ? "delivered" : rand > 0.4 ? "shipped" : "in_production"
+    } else if (isCurrentMonth) {
+      const rand = Math.random()
+      status = rand > 0.6 ? "confirmed" : rand > 0.3 ? "approved" : "predicted"
+    } else {
+      status = "predicted"
+    }
+
     orders.push({
       id: `ORD-${String(orderId++).padStart(6, "0")}`,
       orderDate: yearMonth,
@@ -125,12 +139,12 @@ export function generateSampleOrders(): Order[] {
       category: "ESS",
       destination: "일본",
       predictedQuantity: essQty,
-      confirmedQuantity: isHistorical ? essQty : 0,
+      confirmedQuantity: status !== "predicted" ? essQty : 0,
       unitPrice: essProduct.unitPrice,
-      status: isHistorical ? (Math.random() > 0.3 ? "delivered" : "shipped") : "predicted",
+      status,
       specialNotes: "월 1회 출하, 소량",
       estimatedDeliveryDate: essDeliveryDate.toISOString().split("T")[0],
-      actualDeliveryDate: isHistorical ? essDeliveryDate.toISOString().split("T")[0] : undefined,
+      actualDeliveryDate: status === "delivered" ? essDeliveryDate.toISOString().split("T")[0] : undefined,
       createdAt: yearMonth + "-01",
       updatedAt: yearMonth + "-01",
     })
@@ -146,6 +160,17 @@ export function generateSampleOrders(): Order[] {
         const deliveryDate = new Date(orderDate)
         deliveryDate.setDate(deliveryDate.getDate() + leadTime)
 
+        let evStatus: Order["status"]
+        if (isHistorical) {
+          const rand = Math.random()
+          evStatus = rand > 0.7 ? "delivered" : rand > 0.4 ? "shipped" : "in_production"
+        } else if (isCurrentMonth) {
+          const rand = Math.random()
+          evStatus = rand > 0.6 ? "confirmed" : rand > 0.3 ? "approved" : "predicted"
+        } else {
+          evStatus = "predicted"
+        }
+
         orders.push({
           id: `ORD-${String(orderId++).padStart(6, "0")}`,
           orderDate: yearMonth,
@@ -154,12 +179,12 @@ export function generateSampleOrders(): Order[] {
           category: "EV",
           destination: product.destination,
           predictedQuantity: quantity,
-          confirmedQuantity: isHistorical ? quantity : 0,
+          confirmedQuantity: evStatus !== "predicted" ? quantity : 0,
           unitPrice: product.unitPrice,
-          status: isHistorical ? (Math.random() > 0.3 ? "delivered" : "shipped") : "predicted",
+          status: evStatus,
           specialNotes: "동일 품번 해외/국내 동시 출하",
           estimatedDeliveryDate: deliveryDate.toISOString().split("T")[0],
-          actualDeliveryDate: isHistorical ? deliveryDate.toISOString().split("T")[0] : undefined,
+          actualDeliveryDate: evStatus === "delivered" ? deliveryDate.toISOString().split("T")[0] : undefined,
           createdAt: yearMonth + "-01",
           updatedAt: yearMonth + "-01",
         })
@@ -174,6 +199,17 @@ export function generateSampleOrders(): Order[] {
       const deliveryDate = new Date(orderDate)
       deliveryDate.setDate(deliveryDate.getDate() + leadTime)
 
+      let svStatus: Order["status"]
+      if (isHistorical) {
+        const rand = Math.random()
+        svStatus = rand > 0.7 ? "delivered" : rand > 0.4 ? "shipped" : "in_production"
+      } else if (isCurrentMonth) {
+        const rand = Math.random()
+        svStatus = rand > 0.6 ? "confirmed" : rand > 0.3 ? "approved" : "predicted"
+      } else {
+        svStatus = "predicted"
+      }
+
       orders.push({
         id: `ORD-${String(orderId++).padStart(6, "0")}`,
         orderDate: yearMonth,
@@ -182,12 +218,12 @@ export function generateSampleOrders(): Order[] {
         category: "SV",
         destination: product.destination,
         predictedQuantity: qty,
-        confirmedQuantity: isHistorical ? qty : 0,
+        confirmedQuantity: svStatus !== "predicted" ? qty : 0,
         unitPrice: product.unitPrice,
-        status: isHistorical ? (Math.random() > 0.3 ? "delivered" : "shipped") : "predicted",
+        status: svStatus,
         specialNotes: "AS 물량, 혼적 출하 가능",
         estimatedDeliveryDate: deliveryDate.toISOString().split("T")[0],
-        actualDeliveryDate: isHistorical ? deliveryDate.toISOString().split("T")[0] : undefined,
+        actualDeliveryDate: svStatus === "delivered" ? deliveryDate.toISOString().split("T")[0] : undefined,
         createdAt: yearMonth + "-01",
         updatedAt: yearMonth + "-01",
       })
@@ -201,6 +237,17 @@ export function generateSampleOrders(): Order[] {
       const deliveryDate = new Date(orderDate)
       deliveryDate.setDate(deliveryDate.getDate() + leadTime)
 
+      let plbmStatus: Order["status"]
+      if (isHistorical) {
+        const rand = Math.random()
+        plbmStatus = rand > 0.7 ? "delivered" : rand > 0.4 ? "shipped" : "in_production"
+      } else if (isCurrentMonth) {
+        const rand = Math.random()
+        plbmStatus = rand > 0.6 ? "confirmed" : rand > 0.3 ? "approved" : "predicted"
+      } else {
+        plbmStatus = "predicted"
+      }
+
       orders.push({
         id: `ORD-${String(orderId++).padStart(6, "0")}`,
         orderDate: yearMonth,
@@ -209,12 +256,12 @@ export function generateSampleOrders(): Order[] {
         category: "PLBM",
         destination: product.destination,
         predictedQuantity: qty,
-        confirmedQuantity: isHistorical ? qty : 0,
+        confirmedQuantity: plbmStatus !== "predicted" ? qty : 0,
         unitPrice: product.unitPrice,
-        status: isHistorical ? (Math.random() > 0.3 ? "delivered" : "shipped") : "predicted",
+        status: plbmStatus,
         specialNotes: `가변경로: ${product.route?.join(" → ")}`,
         estimatedDeliveryDate: deliveryDate.toISOString().split("T")[0],
-        actualDeliveryDate: isHistorical ? deliveryDate.toISOString().split("T")[0] : undefined,
+        actualDeliveryDate: plbmStatus === "delivered" ? deliveryDate.toISOString().split("T")[0] : undefined,
         createdAt: yearMonth + "-01",
         updatedAt: yearMonth + "-01",
       })
@@ -248,6 +295,15 @@ export function generateSampleProductions(orders: Order[]): Production[] {
     const actualStartDate = new Date(estimatedStartDate)
     actualStartDate.setDate(actualStartDate.getDate() + Math.floor(Math.random() * 3))
 
+    let productionStatus: Production["status"]
+    if (order.status === "delivered" || order.status === "shipped") {
+      productionStatus = "inspected"
+    } else if (order.status === "in_production") {
+      productionStatus = Math.random() > 0.5 ? "in_progress" : "completed"
+    } else {
+      productionStatus = "planned"
+    }
+
     productions.push({
       id: `PROD-${String(prodId).padStart(6, "0")}`,
       orderId: order.id,
@@ -255,12 +311,15 @@ export function generateSampleProductions(orders: Order[]): Production[] {
       lineCapacity,
       tactTime,
       plannedQuantity,
-      inspectedQuantity,
+      inspectedQuantity: productionStatus === "inspected" || productionStatus === "completed" ? inspectedQuantity : 0,
       productionDate: order.orderDate,
       estimatedStartDate: estimatedStartDate.toISOString().split("T")[0],
-      actualStartDate: actualStartDate.toISOString().split("T")[0],
-      status: order.status === "delivered" || order.status === "shipped" ? "inspected" : "in_progress",
-      materialShortage: false,
+      actualStartDate:
+        productionStatus === "in_progress" || productionStatus === "completed" || productionStatus === "inspected"
+          ? actualStartDate.toISOString().split("T")[0]
+          : undefined,
+      status: productionStatus,
+      materialShortage: productionStatus === "planned" && Math.random() > 0.7,
       createdAt: order.orderDate + "-01",
     })
     prodId++
@@ -305,17 +364,27 @@ export function generateSampleDispatch(inventory: Inventory[], orders: Order[]):
   const dispatches: Dispatch[] = []
   let dispatchId = 1
 
-  // Generate dispatch for delivered orders
-  const deliveredOrders = orders.filter((o) => o.status === "delivered" || o.status === "shipped")
+  const relevantOrders = orders.filter(
+    (o) =>
+      o.status === "approved" || o.status === "in_production" || o.status === "delivered" || o.status === "shipped",
+  )
 
-  deliveredOrders.forEach((order, index) => {
+  relevantOrders.forEach((order, index) => {
     if (index % 3 === 0) {
-      // Create dispatch every 3 orders
       const vehicleSizes: Array<"5톤" | "11톤" | "25톤"> = ["5톤", "11톤", "25톤"]
       const vehicleSize = vehicleSizes[Math.floor(Math.random() * vehicleSizes.length)]
 
       const dispatchDate = new Date(order.orderDate + "-20")
       const isMixed = order.category === "SV" || order.category === "PLBM"
+
+      let dispatchStatus: Dispatch["status"]
+      if (order.status === "delivered") {
+        dispatchStatus = "completed"
+      } else if (order.status === "shipped") {
+        dispatchStatus = "dispatched"
+      } else {
+        dispatchStatus = "planned"
+      }
 
       dispatches.push({
         id: `DISP-${String(dispatchId).padStart(6, "0")}`,
@@ -335,9 +404,11 @@ export function generateSampleDispatch(inventory: Inventory[], orders: Order[]):
         ],
         estimatedWeight: order.confirmedQuantity * 25,
         actualWeight:
-          order.status === "delivered" ? order.confirmedQuantity * 25 + Math.floor(Math.random() * 100 - 50) : null,
+          dispatchStatus === "completed" || dispatchStatus === "dispatched"
+            ? order.confirmedQuantity * 25 + Math.floor(Math.random() * 100 - 50)
+            : null,
         dispatchDate: dispatchDate.toISOString().split("T")[0],
-        status: order.status === "delivered" ? "completed" : "dispatched",
+        status: dispatchStatus,
         createdAt: order.orderDate + "-15",
       })
       dispatchId++
