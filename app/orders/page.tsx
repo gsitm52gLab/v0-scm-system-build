@@ -6,15 +6,17 @@ import { OrderTable } from "@/components/order-table"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
 import type { Order } from "@/lib/db"
-import { Download, Upload, Save, Truck, CheckCircle2 } from "lucide-react"
+import { Download, Upload, Save, Package, TruckIcon, Clock } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useAuth } from "@/components/auth-provider"
 
 export default function OrdersPage() {
+  const { user } = useAuth()
   const [orders, setOrders] = useState<Order[]>([])
   const [selectedMonth, setSelectedMonth] = useState("2025-12")
   const [selectedCustomer, setSelectedCustomer] = useState<string>("all")
@@ -27,7 +29,7 @@ export default function OrdersPage() {
 
   useEffect(() => {
     fetchOrders()
-  }, [selectedMonth])
+  }, [selectedMonth, selectedCustomer, user])
 
   const initializeData = async () => {
     try {
@@ -44,7 +46,24 @@ export default function OrdersPage() {
   const fetchOrders = async () => {
     setLoading(true)
     try {
-      const response = await fetch(`/api/orders?month=${selectedMonth}`)
+      let url = "/api/orders"
+      const params = new URLSearchParams()
+
+      if (selectedMonth !== "all") {
+        params.append("month", selectedMonth)
+      }
+
+      if (user?.role === "customer") {
+        params.append("customer", user.company)
+      } else if (selectedCustomer !== "all") {
+        params.append("customer", selectedCustomer)
+      }
+
+      if (params.toString()) {
+        url += `?${params.toString()}`
+      }
+
+      const response = await fetch(url)
       const data = await response.json()
       if (data.success) {
         setOrders(data.data)
@@ -109,9 +128,19 @@ export default function OrdersPage() {
 
   const handleExportExcel = () => {
     const csv = [
-      ["주문번호", "발주월", "발주사", "품목", "예측수량", "확정수량", "상태"].join(","),
+      ["주문번호", "발주월", "발주사", "품목", "예측수량", "확정수량", "단가(만원)", "금액(만원)", "상태"].join(","),
       ...orders.map((o) =>
-        [o.id, o.orderDate, o.customer, o.product, o.predictedQuantity, o.confirmedQuantity, o.status].join(","),
+        [
+          o.id,
+          o.orderDate,
+          o.customer,
+          o.product,
+          o.predictedQuantity,
+          o.confirmedQuantity,
+          o.unitPrice,
+          o.confirmedQuantity * o.unitPrice,
+          o.status,
+        ].join(","),
       ),
     ].join("\n")
 
@@ -130,11 +159,15 @@ export default function OrdersPage() {
     total: filteredOrders.reduce((sum, o) => sum + o.predictedQuantity, 0),
     confirmed: filteredOrders.reduce((sum, o) => sum + o.confirmedQuantity, 0),
     pending: filteredOrders.filter((o) => o.status === "predicted").length,
-    predictedAmount: filteredOrders.reduce((sum, o) => sum + o.totalAmount, 0),
-    confirmedAmount: filteredOrders.filter((o) => o.status !== "predicted").reduce((sum, o) => sum + o.totalAmount, 0),
+    predictedAmount: filteredOrders.reduce((sum, o) => sum + o.predictedQuantity * o.unitPrice, 0),
+    confirmedAmount: filteredOrders.reduce((sum, o) => sum + o.confirmedQuantity * o.unitPrice, 0),
+    shipped: filteredOrders.filter((o) => o.status === "shipped" || o.status === "delivered").length,
   }
 
-  const shippedOrders = orders.filter((o) => o.status === "shipped" || o.status === "delivered")
+  const deliveryOrders = orders.filter(
+    (o) =>
+      o.status === "approved" || o.status === "in_production" || o.status === "shipped" || o.status === "delivered",
+  )
 
   return (
     <div className="min-h-screen bg-background">
@@ -148,16 +181,14 @@ export default function OrdersPage() {
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-4 mb-6">
+        <div className="grid gap-6 md:grid-cols-5 mb-6">
           <Card>
             <CardHeader className="pb-3">
               <CardDescription>총 예측 수량</CardDescription>
               <CardTitle className="text-3xl">{stats.total.toLocaleString()}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
-                {(stats.predictedAmount / 1000000).toLocaleString()}백만원
-              </p>
+              <p className="text-sm font-semibold text-primary">{stats.predictedAmount.toLocaleString()}만원</p>
             </CardContent>
           </Card>
           <Card>
@@ -166,9 +197,7 @@ export default function OrdersPage() {
               <CardTitle className="text-3xl">{stats.confirmed.toLocaleString()}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
-                {(stats.confirmedAmount / 1000000).toLocaleString()}백만원
-              </p>
+              <p className="text-sm font-semibold text-green-600">{stats.confirmedAmount.toLocaleString()}만원</p>
             </CardContent>
           </Card>
           <Card>
@@ -179,16 +208,24 @@ export default function OrdersPage() {
           </Card>
           <Card>
             <CardHeader className="pb-3">
-              <CardDescription>배송 중</CardDescription>
-              <CardTitle className="text-3xl">{shippedOrders.length}</CardTitle>
+              <CardDescription>출하 완료</CardDescription>
+              <CardTitle className="text-3xl">{stats.shipped}</CardTitle>
+            </CardHeader>
+          </Card>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardDescription>월평균 금액</CardDescription>
+              <CardTitle className="text-2xl">{Math.round(stats.confirmedAmount / 1).toLocaleString()}만원</CardTitle>
             </CardHeader>
           </Card>
         </div>
 
         <Tabs defaultValue="orders" className="w-full">
-          <TabsList>
-            <TabsTrigger value="orders">발주 관리</TabsTrigger>
-            <TabsTrigger value="delivery">배송 추적</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="orders">발주 계획</TabsTrigger>
+            <TabsTrigger value="delivery">
+              배송 현황 <Badge className="ml-2">{deliveryOrders.length}</Badge>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="orders" className="mt-6">
@@ -202,21 +239,24 @@ export default function OrdersPage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="all">전체 기간</SelectItem>
                         <SelectItem value="2025-11">2025년 11월</SelectItem>
                         <SelectItem value="2025-12">2025년 12월</SelectItem>
                       </SelectContent>
                     </Select>
 
-                    <Select value={selectedCustomer} onValueChange={setSelectedCustomer}>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">전체 발주사</SelectItem>
-                        <SelectItem value="현대차">현대차</SelectItem>
-                        <SelectItem value="삼성SDI">삼성SDI</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    {user?.role !== "customer" && (
+                      <Select value={selectedCustomer} onValueChange={setSelectedCustomer}>
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">전체 발주사</SelectItem>
+                          <SelectItem value="현대차">현대차</SelectItem>
+                          <SelectItem value="삼성SDI">삼성SDI</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
 
                     <Button variant="outline" onClick={handleExportExcel}>
                       <Download className="w-4 h-4 mr-2" />
@@ -246,65 +286,91 @@ export default function OrdersPage() {
           <TabsContent value="delivery" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>배송 추적</CardTitle>
-                <CardDescription>출하된 주문의 배송 현황과 예상 도착일을 확인합니다</CardDescription>
+                <CardTitle>배송 현황</CardTitle>
+                <CardDescription>주문부터 배송까지 전체 프로세스를 추적합니다</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="border rounded-lg">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>주문번호</TableHead>
-                        <TableHead>품목</TableHead>
-                        <TableHead>목적지</TableHead>
-                        <TableHead>수량</TableHead>
-                        <TableHead>금액</TableHead>
-                        <TableHead>리드타임</TableHead>
-                        <TableHead>예상 도착일</TableHead>
-                        <TableHead>상태</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {shippedOrders.length === 0 ? (
+                {loading ? (
+                  <div className="text-center py-8 text-muted-foreground">데이터를 불러오는 중...</div>
+                ) : (
+                  <div className="border rounded-lg">
+                    <Table>
+                      <TableHeader>
                         <TableRow>
-                          <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
-                            배송 중인 주문이 없습니다.
-                          </TableCell>
+                          <TableHead>주문번호</TableHead>
+                          <TableHead>발주사</TableHead>
+                          <TableHead>품목</TableHead>
+                          <TableHead>수량</TableHead>
+                          <TableHead>금액</TableHead>
+                          <TableHead>리드타임</TableHead>
+                          <TableHead>예상 도착일</TableHead>
+                          <TableHead>상태</TableHead>
                         </TableRow>
-                      ) : (
-                        shippedOrders.map((order) => (
-                          <TableRow key={order.id}>
-                            <TableCell className="font-medium">{order.id}</TableCell>
-                            <TableCell>{order.product}</TableCell>
-                            <TableCell>{order.destination}</TableCell>
-                            <TableCell>{order.confirmedQuantity.toLocaleString()}</TableCell>
-                            <TableCell>{(order.totalAmount / 1000000).toFixed(1)}M</TableCell>
-                            <TableCell>{order.leadTimeDays}일</TableCell>
-                            <TableCell>
-                              {order.expectedDeliveryDate ||
-                                new Date(
-                                  new Date(order.orderDate).getTime() + order.leadTimeDays * 24 * 60 * 60 * 1000,
-                                ).toLocaleDateString("ko-KR")}
-                            </TableCell>
-                            <TableCell>
-                              {order.status === "delivered" ? (
-                                <Badge className="bg-green-600">
-                                  <CheckCircle2 className="w-3 h-3 mr-1" />
-                                  배송완료
-                                </Badge>
-                              ) : (
-                                <Badge variant="secondary">
-                                  <Truck className="w-3 h-3 mr-1" />
-                                  배송중
-                                </Badge>
-                              )}
+                      </TableHeader>
+                      <TableBody>
+                        {deliveryOrders.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                              배송 중인 주문이 없습니다.
                             </TableCell>
                           </TableRow>
-                        ))
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
+                        ) : (
+                          deliveryOrders.map((order) => {
+                            const leadTime = (() => {
+                              const leadTimes = { ESS: 30, EV: 21, SV: 14, PLBM: 18 }
+                              return leadTimes[order.category]
+                            })()
+
+                            return (
+                              <TableRow key={order.id}>
+                                <TableCell className="font-medium">{order.id}</TableCell>
+                                <TableCell>{order.customer}</TableCell>
+                                <TableCell>{order.product}</TableCell>
+                                <TableCell>{order.confirmedQuantity.toLocaleString()}</TableCell>
+                                <TableCell className="font-semibold">
+                                  {(order.confirmedQuantity * order.unitPrice).toLocaleString()}만원
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex items-center gap-1">
+                                    <Clock className="w-4 h-4 text-muted-foreground" />
+                                    {leadTime}일
+                                  </div>
+                                </TableCell>
+                                <TableCell>{order.estimatedDeliveryDate}</TableCell>
+                                <TableCell>
+                                  {order.status === "approved" && (
+                                    <Badge variant="secondary">
+                                      <Package className="w-3 h-3 mr-1" />
+                                      승인완료
+                                    </Badge>
+                                  )}
+                                  {order.status === "in_production" && (
+                                    <Badge className="bg-orange-600">
+                                      <Package className="w-3 h-3 mr-1" />
+                                      생산중
+                                    </Badge>
+                                  )}
+                                  {order.status === "shipped" && (
+                                    <Badge className="bg-blue-600">
+                                      <TruckIcon className="w-3 h-3 mr-1" />
+                                      출하완료
+                                    </Badge>
+                                  )}
+                                  {order.status === "delivered" && (
+                                    <Badge className="bg-green-600">
+                                      <TruckIcon className="w-3 h-3 mr-1" />
+                                      배송완료
+                                    </Badge>
+                                  )}
+                                </TableCell>
+                              </TableRow>
+                            )
+                          })
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

@@ -1,32 +1,25 @@
 import { NextResponse } from "next/server"
-import { db, initializeDatabase } from "@/lib/db"
-
-// Initialize database
-initializeDatabase()
+import { initializeDatabase, db } from "@/lib/db"
 
 export async function GET() {
-  try {
-    const materials = db.materials.getAll()
-    return NextResponse.json({ success: true, data: materials })
-  } catch (error) {
-    console.error("[v0] Material API error:", error)
-    return NextResponse.json({ success: false, error: "Failed to fetch materials" }, { status: 500 })
-  }
+  initializeDatabase()
+  const materials = db.materials.getAll()
+  return NextResponse.json(materials)
 }
 
-export async function PUT(request: Request) {
-  try {
-    const body = await request.json()
-    const { code, ...data } = body
+export async function POST(request: Request) {
+  const body = await request.json()
+  const { code, currentStock } = body
 
-    const updated = db.materials.update(code, data)
-    if (!updated) {
-      return NextResponse.json({ success: false, error: "Material not found" }, { status: 404 })
-    }
-
-    return NextResponse.json({ success: true, data: updated })
-  } catch (error) {
-    console.error("[v0] Material update error:", error)
-    return NextResponse.json({ success: false, error: "Failed to update material" }, { status: 500 })
+  if (!code || currentStock === undefined) {
+    return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
   }
+
+  const updated = db.materials.update(code, { currentStock })
+
+  if (!updated) {
+    return NextResponse.json({ error: "Material not found" }, { status: 404 })
+  }
+
+  return NextResponse.json(updated)
 }

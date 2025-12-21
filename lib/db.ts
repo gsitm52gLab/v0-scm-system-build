@@ -11,13 +11,11 @@ export interface Order {
   destination: string // Destination/route
   predictedQuantity: number
   confirmedQuantity: number
-  unitPrice: number
-  totalAmount: number
+  unitPrice: number // 만원 (10K KRW)
   status: "predicted" | "confirmed" | "approved" | "in_production" | "shipped" | "delivered"
-  leadTimeDays: number
-  expectedDeliveryDate?: string
+  specialNotes?: string // For mixed loading, low volume, etc.
+  estimatedDeliveryDate?: string
   actualDeliveryDate?: string
-  specialNotes?: string
   createdAt: string
   updatedAt: string
 }
@@ -26,10 +24,15 @@ export interface Production {
   id: string
   orderId: string
   productionLine: "광주1공장" | "광주2공장"
+  lineCapacity: number // Units per day
+  tactTime: number // Minutes per unit
   plannedQuantity: number
   inspectedQuantity: number
   productionDate: string
-  status: "planned" | "completed" | "inspected"
+  estimatedStartDate: string
+  actualStartDate?: string
+  status: "planned" | "material_ready" | "in_progress" | "completed" | "inspected"
+  materialShortage: boolean
   createdAt: string
 }
 
@@ -68,44 +71,52 @@ export interface Material {
   id: string
   code: string
   name: string
-  category: string
-  unitPrice: number
-  currentStock: number
+  unit: string
   minStock: number
+  currentStock: number
+  unitPrice: number // 원 per unit
   supplier: string
   leadTimeDays: number
+  updatedAt: string
 }
 
-export interface MaterialRequirement {
-  id: string
-  productionId: string
-  materialCode: string
-  requiredQuantity: number
-  availableQuantity: number
-  shortfallQuantity: number
-  status: "sufficient" | "insufficient" | "ordered"
-  orderDate?: string
-  expectedArrivalDate?: string
-  createdAt: string
+export interface BOM {
+  productCode: string
+  materials: {
+    materialCode: string
+    quantity: number // Required quantity per product unit
+  }[]
 }
 
 // Generate sample data for 2024-01 to 2025-12
+function calculateLeadTime(category: ProductCategory): number {
+  const leadTimes = {
+    ESS: 30, // days
+    EV: 21,
+    SV: 14,
+    PLBM: 18,
+  }
+  return leadTimes[category]
+}
+
 export function generateSampleOrders(): Order[] {
   const orders: Order[] = []
-
   const startDate = new Date("2024-01-01")
   const endDate = new Date("2025-12-31")
-
   let orderId = 1
 
   for (let d = new Date(startDate); d <= endDate; d.setMonth(d.getMonth() + 1)) {
     const yearMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
     const isHistorical = d < new Date("2025-12-01")
+    const orderDate = new Date(yearMonth + "-15")
 
     // ESS orders
-    const essProduct = productPortfolio[Math.floor(Math.random() * 2)]
+    const essProduct = productPortfolio.find((p) => p.code === "ESS-001")!
     const essQty = 50 + Math.floor(Math.random() * 30)
-    const essUnitPrice = unitPrices.ESS
+    const essLeadTime = calculateLeadTime("ESS")
+    const essDeliveryDate = new Date(orderDate)
+    essDeliveryDate.setDate(essDeliveryDate.getDate() + essLeadTime)
+
     orders.push({
       id: `ORD-${String(orderId++).padStart(6, "0")}`,
       orderDate: yearMonth,
@@ -115,11 +126,11 @@ export function generateSampleOrders(): Order[] {
       destination: "일본",
       predictedQuantity: essQty,
       confirmedQuantity: isHistorical ? essQty : 0,
-      unitPrice: essUnitPrice,
-      totalAmount: essQty * essUnitPrice,
-      leadTimeDays: leadTimes.ESS,
+      unitPrice: essProduct.unitPrice,
       status: isHistorical ? (Math.random() > 0.3 ? "delivered" : "shipped") : "predicted",
       specialNotes: "월 1회 출하, 소량",
+      estimatedDeliveryDate: essDeliveryDate.toISOString().split("T")[0],
+      actualDeliveryDate: isHistorical ? essDeliveryDate.toISOString().split("T")[0] : undefined,
       createdAt: yearMonth + "-01",
       updatedAt: yearMonth + "-01",
     })
@@ -131,7 +142,9 @@ export function generateSampleOrders(): Order[] {
         const baseQuantity = customer === "현대차" ? 500 : 400
         const variance = Math.floor(Math.random() * 200) - 100
         const quantity = Math.max(100, baseQuantity + variance)
-        const unitPrice = unitPrices.EV
+        const leadTime = calculateLeadTime("EV")
+        const deliveryDate = new Date(orderDate)
+        deliveryDate.setDate(deliveryDate.getDate() + leadTime)
 
         orders.push({
           id: `ORD-${String(orderId++).padStart(6, "0")}`,
@@ -142,11 +155,11 @@ export function generateSampleOrders(): Order[] {
           destination: product.destination,
           predictedQuantity: quantity,
           confirmedQuantity: isHistorical ? quantity : 0,
-          unitPrice,
-          totalAmount: quantity * unitPrice,
-          leadTimeDays: leadTimes.EV,
+          unitPrice: product.unitPrice,
           status: isHistorical ? (Math.random() > 0.3 ? "delivered" : "shipped") : "predicted",
           specialNotes: "동일 품번 해외/국내 동시 출하",
+          estimatedDeliveryDate: deliveryDate.toISOString().split("T")[0],
+          actualDeliveryDate: isHistorical ? deliveryDate.toISOString().split("T")[0] : undefined,
           createdAt: yearMonth + "-01",
           updatedAt: yearMonth + "-01",
         })
@@ -157,7 +170,10 @@ export function generateSampleOrders(): Order[] {
     const svProducts = productPortfolio.filter((p) => p.category === "SV")
     svProducts.forEach((product) => {
       const qty = 20 + Math.floor(Math.random() * 30)
-      const unitPrice = unitPrices.SV
+      const leadTime = calculateLeadTime("SV")
+      const deliveryDate = new Date(orderDate)
+      deliveryDate.setDate(deliveryDate.getDate() + leadTime)
+
       orders.push({
         id: `ORD-${String(orderId++).padStart(6, "0")}`,
         orderDate: yearMonth,
@@ -167,11 +183,11 @@ export function generateSampleOrders(): Order[] {
         destination: product.destination,
         predictedQuantity: qty,
         confirmedQuantity: isHistorical ? qty : 0,
-        unitPrice,
-        totalAmount: qty * unitPrice,
-        leadTimeDays: leadTimes.SV,
+        unitPrice: product.unitPrice,
         status: isHistorical ? (Math.random() > 0.3 ? "delivered" : "shipped") : "predicted",
         specialNotes: "AS 물량, 혼적 출하 가능",
+        estimatedDeliveryDate: deliveryDate.toISOString().split("T")[0],
+        actualDeliveryDate: isHistorical ? deliveryDate.toISOString().split("T")[0] : undefined,
         createdAt: yearMonth + "-01",
         updatedAt: yearMonth + "-01",
       })
@@ -181,7 +197,10 @@ export function generateSampleOrders(): Order[] {
     const plbmProducts = productPortfolio.filter((p) => p.category === "PLBM")
     plbmProducts.forEach((product) => {
       const qty = 10 + Math.floor(Math.random() * 20)
-      const unitPrice = unitPrices.PLBM
+      const leadTime = calculateLeadTime("PLBM")
+      const deliveryDate = new Date(orderDate)
+      deliveryDate.setDate(deliveryDate.getDate() + leadTime)
+
       orders.push({
         id: `ORD-${String(orderId++).padStart(6, "0")}`,
         orderDate: yearMonth,
@@ -191,11 +210,11 @@ export function generateSampleOrders(): Order[] {
         destination: product.destination,
         predictedQuantity: qty,
         confirmedQuantity: isHistorical ? qty : 0,
-        unitPrice,
-        totalAmount: qty * unitPrice,
-        leadTimeDays: leadTimes.PLBM,
+        unitPrice: product.unitPrice,
         status: isHistorical ? (Math.random() > 0.3 ? "delivered" : "shipped") : "predicted",
         specialNotes: `가변경로: ${product.route?.join(" → ")}`,
+        estimatedDeliveryDate: deliveryDate.toISOString().split("T")[0],
+        actualDeliveryDate: isHistorical ? deliveryDate.toISOString().split("T")[0] : undefined,
         createdAt: yearMonth + "-01",
         updatedAt: yearMonth + "-01",
       })
@@ -207,26 +226,34 @@ export function generateSampleOrders(): Order[] {
 
 export function generateSampleProductions(orders: Order[]): Production[] {
   const productions: Production[] = []
-  const approvedOrders = orders.filter((o) => o.status === "approved")
-
+  const approvedOrders = orders.filter((o) => o.status === "approved" || o.status === "in_production")
   let prodId = 1
 
   approvedOrders.forEach((order) => {
     const productionLine = order.category === "EV" ? "광주1공장" : "광주2공장"
+    const lineCapacity = productionLine === "광주1공장" ? 1000 : 800
+    const tactTime = order.category === "EV" ? 30 : 45
     const plannedQuantity = order.confirmedQuantity
-    const inspectedQuantity = plannedQuantity - Math.floor(Math.random() * 10)
+    const inspectedQuantity = Math.floor(plannedQuantity * 0.95)
+
+    const orderDate = new Date(order.orderDate + "-01")
+    const estimatedStartDate = new Date(orderDate)
+    estimatedStartDate.setDate(estimatedStartDate.getDate() + 7)
 
     productions.push({
       id: `PROD-${String(prodId).padStart(6, "0")}`,
       orderId: order.id,
       productionLine,
+      lineCapacity,
+      tactTime,
       plannedQuantity,
       inspectedQuantity,
       productionDate: order.orderDate,
+      estimatedStartDate: estimatedStartDate.toISOString().split("T")[0],
       status: "inspected",
+      materialShortage: false,
       createdAt: order.orderDate + "-01",
     })
-
     prodId++
   })
 
@@ -234,26 +261,26 @@ export function generateSampleProductions(orders: Order[]): Production[] {
 }
 
 const productPortfolio = [
-  // ESS - Energy Storage System (Japan export, monthly, low volume)
-  { code: "ESS-001", category: "ESS" as ProductCategory, name: "ESS Module A", destination: "일본" },
-  { code: "ESS-002", category: "ESS" as ProductCategory, name: "ESS Module B", destination: "일본" },
-
-  // EV - Electric Vehicle (Europe & domestic Changwon)
-  { code: "EV-100", category: "EV" as ProductCategory, name: "EV Battery Module", destination: "유럽" },
-  { code: "EV-100K", category: "EV" as ProductCategory, name: "EV Battery Module", destination: "창원" },
-  { code: "EV-200", category: "EV" as ProductCategory, name: "EV Pack Assembly", destination: "유럽" },
-
-  // SV - Service/After Service (mixed loading with PLBM)
-  { code: "SV-001", category: "SV" as ProductCategory, name: "Service Module A", destination: "울산" },
-  { code: "SV-002", category: "SV" as ProductCategory, name: "Service Module B", destination: "경주" },
-
-  // PLBM - ~50 specifications, low volume high variety, variable routes
+  { code: "ESS-001", category: "ESS" as ProductCategory, name: "ESS Module A", destination: "일본", unitPrice: 150 },
+  { code: "ESS-002", category: "ESS" as ProductCategory, name: "ESS Module B", destination: "일본", unitPrice: 155 },
+  { code: "EV-100", category: "EV" as ProductCategory, name: "EV Battery Module", destination: "유럽", unitPrice: 200 },
+  {
+    code: "EV-100K",
+    category: "EV" as ProductCategory,
+    name: "EV Battery Module",
+    destination: "창원",
+    unitPrice: 200,
+  },
+  { code: "EV-200", category: "EV" as ProductCategory, name: "EV Pack Assembly", destination: "유럽", unitPrice: 250 },
+  { code: "SV-001", category: "SV" as ProductCategory, name: "Service Module A", destination: "울산", unitPrice: 120 },
+  { code: "SV-002", category: "SV" as ProductCategory, name: "Service Module B", destination: "경주", unitPrice: 115 },
   {
     code: "PLBM-A01",
     category: "PLBM" as ProductCategory,
     name: "PLBM Spec A1",
     destination: "울산글로비스",
     route: ["광주", "경주", "울산사외창고", "울산글로비스"],
+    unitPrice: 180,
   },
   {
     code: "PLBM-A02",
@@ -261,6 +288,7 @@ const productPortfolio = [
     name: "PLBM Spec A2",
     destination: "울산글로비스",
     route: ["광주", "울산글로비스"],
+    unitPrice: 175,
   },
   {
     code: "PLBM-B01",
@@ -268,6 +296,7 @@ const productPortfolio = [
     name: "PLBM Spec B1",
     destination: "경주",
     route: ["광주", "경주"],
+    unitPrice: 170,
   },
   {
     code: "PLBM-B02",
@@ -275,99 +304,125 @@ const productPortfolio = [
     name: "PLBM Spec B2",
     destination: "울산사외창고",
     route: ["광주", "울산사외창고"],
+    unitPrice: 172,
+  },
+]
+
+const materials: Material[] = [
+  {
+    id: "MAT-001",
+    code: "CELL-001",
+    name: "리튬이온 배터리 셀",
+    unit: "EA",
+    minStock: 10000,
+    currentStock: 15000,
+    unitPrice: 5000,
+    supplier: "LG에너지솔루션",
+    leadTimeDays: 14,
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: "MAT-002",
+    code: "PCB-001",
+    name: "BMS PCB",
+    unit: "EA",
+    minStock: 5000,
+    currentStock: 3000,
+    unitPrice: 2000,
+    supplier: "삼성전기",
+    leadTimeDays: 7,
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: "MAT-003",
+    code: "CASE-001",
+    name: "알루미늄 케이스",
+    unit: "EA",
+    minStock: 3000,
+    currentStock: 4000,
+    unitPrice: 3000,
+    supplier: "한국알루미늄",
+    leadTimeDays: 10,
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: "MAT-004",
+    code: "WIRE-001",
+    name: "고전압 와이어 하네스",
+    unit: "SET",
+    minStock: 2000,
+    currentStock: 1500,
+    unitPrice: 1500,
+    supplier: "유라코퍼레이션",
+    leadTimeDays: 5,
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: "MAT-005",
+    code: "COOL-001",
+    name: "냉각판",
+    unit: "EA",
+    minStock: 2000,
+    currentStock: 2500,
+    unitPrice: 4000,
+    supplier: "한온시스템",
+    leadTimeDays: 12,
+    updatedAt: new Date().toISOString(),
+  },
+]
+
+const bomData: BOM[] = [
+  {
+    productCode: "ESS-001",
+    materials: [
+      { materialCode: "CELL-001", quantity: 100 },
+      { materialCode: "PCB-001", quantity: 2 },
+      { materialCode: "CASE-001", quantity: 1 },
+      { materialCode: "WIRE-001", quantity: 1 },
+    ],
+  },
+  {
+    productCode: "EV-100",
+    materials: [
+      { materialCode: "CELL-001", quantity: 150 },
+      { materialCode: "PCB-001", quantity: 3 },
+      { materialCode: "CASE-001", quantity: 1 },
+      { materialCode: "WIRE-001", quantity: 2 },
+      { materialCode: "COOL-001", quantity: 1 },
+    ],
+  },
+  {
+    productCode: "SV-001",
+    materials: [
+      { materialCode: "CELL-001", quantity: 50 },
+      { materialCode: "PCB-001", quantity: 1 },
+      { materialCode: "CASE-001", quantity: 1 },
+    ],
+  },
+  {
+    productCode: "PLBM-A01",
+    materials: [
+      { materialCode: "CELL-001", quantity: 80 },
+      { materialCode: "PCB-001", quantity: 2 },
+      { materialCode: "CASE-001", quantity: 1 },
+      { materialCode: "WIRE-001", quantity: 1 },
+      { materialCode: "COOL-001", quantity: 1 },
+    ],
   },
 ]
 
 // In-memory storage (will be replaced with real DB in production)
 let ordersData: Order[] = []
 let productionsData: Production[] = []
+let materialsData: Material[] = []
 const inventoryData: Inventory[] = []
 const dispatchData: Dispatch[] = []
-const materialsData: Material[] = []
-const materialRequirementsData: MaterialRequirement[] = []
-
-const leadTimes = {
-  ESS: 45, // 45 days for ESS
-  EV: 30, // 30 days for EV
-  SV: 21, // 21 days for SV
-  PLBM: 25, // 25 days for PLBM
-}
-
-const unitPrices = {
-  ESS: 15000000, // 15M KRW per unit
-  EV: 8000000, // 8M KRW per unit
-  SV: 5000000, // 5M KRW per unit
-  PLBM: 3000000, // 3M KRW per unit
-}
-
-export function initializeMaterials(): Material[] {
-  const materials: Material[] = [
-    {
-      id: "MAT-001",
-      code: "CELL-001",
-      name: "리튬이온 셀",
-      category: "배터리셀",
-      unitPrice: 50000,
-      currentStock: 10000,
-      minStock: 5000,
-      supplier: "LG에너지솔루션",
-      leadTimeDays: 14,
-    },
-    {
-      id: "MAT-002",
-      code: "BMS-001",
-      name: "BMS 모듈",
-      category: "전자부품",
-      unitPrice: 200000,
-      currentStock: 500,
-      minStock: 200,
-      supplier: "삼성SDI",
-      leadTimeDays: 10,
-    },
-    {
-      id: "MAT-003",
-      code: "FRAME-001",
-      name: "알루미늄 프레임",
-      category: "구조재",
-      unitPrice: 150000,
-      currentStock: 300,
-      minStock: 150,
-      supplier: "포스코",
-      leadTimeDays: 7,
-    },
-    {
-      id: "MAT-004",
-      code: "CABLE-001",
-      name: "고압 케이블",
-      category: "전선",
-      unitPrice: 30000,
-      currentStock: 2000,
-      minStock: 1000,
-      supplier: "LS전선",
-      leadTimeDays: 5,
-    },
-    {
-      id: "MAT-005",
-      code: "COOL-001",
-      name: "냉각 시스템",
-      category: "냉각장치",
-      unitPrice: 300000,
-      currentStock: 150,
-      minStock: 100,
-      supplier: "한온시스템",
-      leadTimeDays: 12,
-    },
-  ]
-
-  materialsData.push(...materials)
-  return materials
-}
 
 export function initializeDatabase() {
   if (ordersData.length === 0) {
     ordersData = generateSampleOrders()
     productionsData = generateSampleProductions(ordersData)
-    initializeMaterials()
+    materialsData = [...materials]
 
     // Calculate initial inventory by category
     const inventoryMap = new Map<string, { category: ProductCategory; quantity: number }>()
@@ -403,7 +458,7 @@ export function initializeDatabase() {
     inventory: inventoryData,
     dispatch: dispatchData,
     materials: materialsData,
-    materialRequirements: materialRequirementsData,
+    bom: bomData,
   }
 }
 
@@ -413,6 +468,7 @@ export const db = {
     getAll: () => ordersData,
     getById: (id: string) => ordersData.find((o) => o.id === id),
     getByMonth: (yearMonth: string) => ordersData.filter((o) => o.orderDate === yearMonth),
+    getByCustomer: (customer: string) => ordersData.filter((o) => o.customer === customer),
     update: (id: string, data: Partial<Order>) => {
       const index = ordersData.findIndex((o) => o.id === id)
       if (index !== -1) {
@@ -443,6 +499,22 @@ export const db = {
       return production
     },
   },
+  materials: {
+    getAll: () => materialsData,
+    getByCode: (code: string) => materialsData.find((m) => m.code === code),
+    update: (code: string, data: Partial<Material>) => {
+      const index = materialsData.findIndex((m) => m.code === code)
+      if (index !== -1) {
+        materialsData[index] = { ...materialsData[index], ...data, updatedAt: new Date().toISOString() }
+        return materialsData[index]
+      }
+      return null
+    },
+  },
+  bom: {
+    getByProduct: (productCode: string) => bomData.find((b) => b.productCode === productCode),
+    getAll: () => bomData,
+  },
   inventory: {
     getAll: () => inventoryData,
     getByProduct: (product: string) => inventoryData.find((i) => i.product === product),
@@ -468,36 +540,6 @@ export const db = {
       if (index !== -1) {
         dispatchData[index] = { ...dispatchData[index], ...data }
         return dispatchData[index]
-      }
-      return null
-    },
-  },
-  materials: {
-    getAll: () => materialsData,
-    getById: (id: string) => materialsData.find((m) => m.id === id),
-    getByCode: (code: string) => materialsData.find((m) => m.code === code),
-    update: (code: string, data: Partial<Material>) => {
-      const index = materialsData.findIndex((m) => m.code === code)
-      if (index !== -1) {
-        materialsData[index] = { ...materialsData[index], ...data }
-        return materialsData[index]
-      }
-      return null
-    },
-  },
-  materialRequirements: {
-    getAll: () => materialRequirementsData,
-    getByProductionId: (productionId: string) =>
-      materialRequirementsData.filter((mr) => mr.productionId === productionId),
-    create: (requirement: MaterialRequirement) => {
-      materialRequirementsData.push(requirement)
-      return requirement
-    },
-    update: (id: string, data: Partial<MaterialRequirement>) => {
-      const index = materialRequirementsData.findIndex((mr) => mr.id === id)
-      if (index !== -1) {
-        materialRequirementsData[index] = { ...materialRequirementsData[index], ...data }
-        return materialRequirementsData[index]
       }
       return null
     },
