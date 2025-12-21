@@ -9,7 +9,7 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "세방산업 통합 SCM 시스템",
+  title: "세방리튬배터리 통합 SCM 시스템",
   description: "발주-생산-출하 관리 시스템",
   generator: "v0.app",
   icons: {
