@@ -226,19 +226,27 @@ export function generateSampleOrders(): Order[] {
 
 export function generateSampleProductions(orders: Order[]): Production[] {
   const productions: Production[] = []
-  const approvedOrders = orders.filter((o) => o.status === "approved" || o.status === "in_production")
+  const productionOrders = orders.filter(
+    (o) =>
+      o.status === "approved" || o.status === "in_production" || o.status === "shipped" || o.status === "delivered",
+  )
   let prodId = 1
 
-  approvedOrders.forEach((order) => {
+  productionOrders.forEach((order) => {
+    if (order.confirmedQuantity === 0) return
+
     const productionLine = order.category === "EV" ? "광주1공장" : "광주2공장"
     const lineCapacity = productionLine === "광주1공장" ? 1000 : 800
     const tactTime = order.category === "EV" ? 30 : 45
     const plannedQuantity = order.confirmedQuantity
-    const inspectedQuantity = Math.floor(plannedQuantity * 0.95)
+    const inspectedQuantity = Math.floor(plannedQuantity * (0.93 + Math.random() * 0.06))
 
     const orderDate = new Date(order.orderDate + "-01")
     const estimatedStartDate = new Date(orderDate)
     estimatedStartDate.setDate(estimatedStartDate.getDate() + 7)
+
+    const actualStartDate = new Date(estimatedStartDate)
+    actualStartDate.setDate(actualStartDate.getDate() + Math.floor(Math.random() * 3))
 
     productions.push({
       id: `PROD-${String(prodId).padStart(6, "0")}`,
@@ -250,7 +258,8 @@ export function generateSampleProductions(orders: Order[]): Production[] {
       inspectedQuantity,
       productionDate: order.orderDate,
       estimatedStartDate: estimatedStartDate.toISOString().split("T")[0],
-      status: "inspected",
+      actualStartDate: actualStartDate.toISOString().split("T")[0],
+      status: order.status === "delivered" || order.status === "shipped" ? "inspected" : "in_progress",
       materialShortage: false,
       createdAt: order.orderDate + "-01",
     })
