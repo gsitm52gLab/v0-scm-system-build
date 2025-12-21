@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Navigation } from "@/components/navigation"
 import { OrderTable } from "@/components/order-table"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -170,9 +169,7 @@ export default function OrdersPage() {
   )
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-
+    <div className="flex-1 overflow-auto bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>

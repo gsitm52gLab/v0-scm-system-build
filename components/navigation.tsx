@@ -23,6 +23,7 @@ export function Navigation() {
     { href: "/orders", label: "발주 계획", icon: ClipboardList, role: "발주사" },
     { href: "/sales", label: "판매 계획", icon: Package, role: "창고관리자" },
     { href: "/production", label: "생산 계획", icon: Factory, role: "생산관리자" },
+    { href: "/production-performance", label: "생산 실적", icon: BarChart3, role: "생산관리자" },
     { href: "/materials", label: "자재 관리", icon: Boxes, role: "자재관리자" },
     { href: "/dispatch", label: "배차 관리", icon: Truck, role: "창고관리자" },
   ]
@@ -30,59 +31,77 @@ export function Navigation() {
   const visibleNavItems = user ? navItems.filter((item) => canAccessPage(user.role, item.href)) : navItems
 
   return (
-    <nav className="border-b border-border bg-card">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded flex items-center justify-center text-primary-foreground font-bold">
-                S
+    <div className="flex h-screen bg-background">
+      {/* LNB - Left Navigation Bar */}
+      <aside className="w-64 border-r border-border bg-card flex flex-col">
+        <div className="p-6 border-b border-border">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary rounded flex items-center justify-center text-primary-foreground font-bold text-lg">
+              S
+            </div>
+            <div>
+              <span className="font-bold text-lg block">세방산업</span>
+              <span className="text-xs text-muted-foreground">SCM 시스템</span>
+            </div>
+          </Link>
+        </div>
+
+        {user && (
+          <div className="p-4 border-b border-border bg-muted/50">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                <User className="w-5 h-5 text-primary" />
               </div>
-              <span className="font-bold text-lg">세방산업 SCM</span>
-            </Link>
-
-            <div className="hidden md:flex items-center gap-1">
-              {visibleNavItems.map((item) => {
-                const Icon = item.icon
-                const isActive = pathname === item.href
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-accent",
-                    )}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {item.label}
-                    {item.role && <span className="text-xs bg-secondary px-2 py-0.5 rounded">{item.role}</span>}
-                  </Link>
-                )
-              })}
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-sm truncate">{user.fullName}</p>
+                <p className="text-xs text-muted-foreground">{user.company}</p>
+                <Badge variant="secondary" className="mt-1 text-xs">
+                  {user.role}
+                </Badge>
+              </div>
             </div>
           </div>
+        )}
 
-          {user && (
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 text-sm">
-                <User className="w-4 h-4" />
-                <div className="flex flex-col items-end">
-                  <span className="font-medium">{user.fullName}</span>
-                  <span className="text-xs text-muted-foreground">{user.role}</span>
-                </div>
-              </div>
-              <Button variant="outline" size="sm" onClick={handleLogout}>
-                <LogOut className="w-4 h-4 mr-1" />
-                로그아웃
-              </Button>
-            </div>
-          )}
-        </div>
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+          {visibleNavItems.map((item) => {
+            const Icon = item.icon
+            const isActive = pathname === item.href
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all",
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent",
+                )}
+              >
+                <Icon className="w-5 h-5 flex-shrink-0" />
+                <span className="flex-1">{item.label}</span>
+              </Link>
+            )
+          })}
+        </nav>
+
+        {user && (
+          <div className="p-4 border-t border-border">
+            <Button variant="outline" size="sm" onClick={handleLogout} className="w-full justify-start bg-transparent">
+              <LogOut className="w-4 h-4 mr-2" />
+              로그아웃
+            </Button>
+          </div>
+        )}
+      </aside>
+
+      {/* Main Content Area - will be used by page content */}
+      <div className="flex-1 flex flex-col overflow-hidden" id="main-content">
+        {/* Pages will render their content here */}
       </div>
-    </nav>
+    </div>
   )
 }
+
+import { Badge } from "@/components/ui/badge"
