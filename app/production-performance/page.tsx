@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -192,8 +193,8 @@ export default function ProductionPerformancePage() {
   }
 
   return (
-    <div className="flex-1 overflow-auto bg-background">
-      <div className="container mx-auto px-4 py-8">
+    <LayoutWrapper>
+      <div className="container mx-auto px-6 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground">생산 실적 대시보드</h1>
           <p className="text-muted-foreground mt-1">양품/불량 현황과 라인 가동율을 실시간으로 모니터링합니다</p>
@@ -510,6 +511,6 @@ export default function ProductionPerformancePage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </LayoutWrapper>
   )
 }

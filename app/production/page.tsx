@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Navigation } from "@/components/navigation"
+import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -380,10 +380,8 @@ export default function ProductionPage() {
   )
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-
-      <div className="container mx-auto px-4 py-8">
+    <LayoutWrapper>
+      <div className="container mx-auto px-6 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground">생산 계획</h1>
           <p className="text-muted-foreground mt-1">공장별 생산 계획을 확인하고 자재 소요량(MRP)을 관리합니다</p>
@@ -599,8 +597,7 @@ export default function ProductionPage() {
           </CardContent>
         </Card>
       </div>
-
       <Toaster />
-    </div>
+    </LayoutWrapper>
   )
 }

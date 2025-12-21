@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { LayoutWrapper } from "@/components/layout-wrapper"
 import { OrderTable } from "@/components/order-table"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -169,8 +170,8 @@ export default function OrdersPage() {
   )
 
   return (
-    <div className="flex-1 overflow-auto bg-background">
-      <div className="container mx-auto px-4 py-8">
+    <LayoutWrapper>
+      <div className="container mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-foreground">발주 계획</h1>
@@ -374,6 +375,6 @@ export default function OrdersPage() {
         </Tabs>
       </div>
       <Toaster />
-    </div>
+    </LayoutWrapper>
   )
 }

@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useEffect, useState } from "react"
+import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart3, Package, Factory, Truck, AlertCircle } from "lucide-react"
 import Link from "next/link"
@@ -181,17 +182,19 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center py-12 text-muted-foreground">데이터를 불러오는 중...</div>
+      <LayoutWrapper>
+        <div className="min-h-screen bg-background">
+          <div className="container mx-auto px-6 py-8">
+            <div className="text-center py-12 text-muted-foreground">데이터를 불러오는 중...</div>
+          </div>
         </div>
-      </div>
+      </LayoutWrapper>
     )
   }
 
   return (
-    <div className="flex-1 overflow-auto bg-background">
-      <div className="container mx-auto px-4 py-8">
+    <LayoutWrapper>
+      <div className="container mx-auto px-6 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-2">세방산업 통합 SCM 시스템</h1>
           <p className="text-muted-foreground text-lg">발주-생산-출하 관리를 한 곳에서</p>
@@ -423,6 +426,6 @@ export default function HomePage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </LayoutWrapper>
   )
 }

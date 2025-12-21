@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Navigation } from "@/components/navigation"
+import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -245,13 +245,19 @@ export default function DispatchPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-
-      <div className="container mx-auto px-4 py-8">
+    <LayoutWrapper>
+      <div className="container mx-auto px-6 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground">배차 관리</h1>
-          <p className="text-muted-foreground mt-1">출하 계획을 수립하고 차량 배차 및 계근 데이터를 관리합니다</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">배차 관리</h1>
+              <p className="text-muted-foreground mt-1">출하 계획을 수립하고 차량 배차를 관리합니다</p>
+            </div>
+            <Button onClick={() => setShowCreateDialog(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              신규 배차
+            </Button>
+          </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 mb-6">
@@ -592,6 +598,6 @@ export default function DispatchPage() {
       </Dialog>
 
       <Toaster />
-    </div>
+    </LayoutWrapper>
   )
 }
