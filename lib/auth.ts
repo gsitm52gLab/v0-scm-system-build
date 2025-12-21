@@ -34,7 +34,7 @@ export const testAccounts: User[] = [
     username: "warehouse_admin",
     password: "test123",
     role: "창고관리자",
-    company: "세방산업",
+    company: "세방리튬배터리",
     fullName: "박창고",
   },
   {
@@ -42,7 +42,7 @@ export const testAccounts: User[] = [
     username: "production_admin",
     password: "test123",
     role: "생산관리자",
-    company: "세방산업",
+    company: "세방리튬배터리",
     fullName: "최생산",
   },
   {
@@ -50,7 +50,7 @@ export const testAccounts: User[] = [
     username: "material_admin",
     password: "test123",
     role: "자재관리자",
-    company: "세방산업",
+    company: "세방리튬배터리",
     fullName: "정자재",
   },
 ]
