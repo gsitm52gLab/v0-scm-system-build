@@ -3,11 +3,20 @@ import { initializeDatabase, db } from "@/lib/db"
 
 export async function GET() {
   initializeDatabase()
-  const materials = db.materials.getAll()
-  return NextResponse.json(materials)
+
+  try {
+    const materials = db.materials.getAll()
+    console.log("[v0] Fetched materials:", materials.length)
+    return NextResponse.json(materials)
+  } catch (error) {
+    console.error("[v0] Failed to fetch materials:", error)
+    return NextResponse.json({ error: "Failed to fetch materials" }, { status: 500 })
+  }
 }
 
 export async function POST(request: Request) {
+  initializeDatabase()
+
   const body = await request.json()
   const { code, currentStock } = body
 
@@ -21,5 +30,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Material not found" }, { status: 404 })
   }
 
+  console.log("[v0] Updated material:", code, currentStock)
   return NextResponse.json(updated)
 }

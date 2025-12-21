@@ -260,6 +260,84 @@ export function generateSampleProductions(orders: Order[]): Production[] {
   return productions
 }
 
+export function generateSampleInventory(productions: Production[], orders: Order[]): Inventory[] {
+  const inventory: Inventory[] = []
+  const inventoryMap = new Map<string, { category: ProductCategory; quantity: number }>()
+
+  productions.forEach((prod) => {
+    const order = orders.find((o) => o.id === prod.orderId)
+    if (order && prod.status === "inspected") {
+      const existing = inventoryMap.get(order.product) || { category: order.category, quantity: 0 }
+      inventoryMap.set(order.product, {
+        category: order.category,
+        quantity: existing.quantity + prod.inspectedQuantity,
+      })
+    }
+  })
+
+  let invId = 1
+  inventoryMap.forEach((data, product) => {
+    inventory.push({
+      id: `INV-${String(invId).padStart(6, "0")}`,
+      productionId: "",
+      product,
+      category: data.category,
+      quantity: data.quantity,
+      location: "광주창고",
+      updatedAt: new Date().toISOString(),
+    })
+    invId++
+  })
+
+  return inventory
+}
+
+export function generateSampleDispatch(inventory: Inventory[], orders: Order[]): Dispatch[] {
+  const dispatches: Dispatch[] = []
+  let dispatchId = 1
+
+  // Generate dispatch for delivered orders
+  const deliveredOrders = orders.filter((o) => o.status === "delivered" || o.status === "shipped")
+
+  deliveredOrders.forEach((order, index) => {
+    if (index % 3 === 0) {
+      // Create dispatch every 3 orders
+      const vehicleSizes: Array<"5톤" | "11톤" | "25톤"> = ["5톤", "11톤", "25톤"]
+      const vehicleSize = vehicleSizes[Math.floor(Math.random() * vehicleSizes.length)]
+
+      const dispatchDate = new Date(order.orderDate + "-20")
+      const isMixed = order.category === "SV" || order.category === "PLBM"
+
+      dispatches.push({
+        id: `DISP-${String(dispatchId).padStart(6, "0")}`,
+        dispatchNumber: `D-${order.orderDate.replace(/-/g, "")}-${String(dispatchId).padStart(3, "0")}`,
+        vehicleNumber: `${Math.floor(Math.random() * 90 + 10)}가${Math.floor(Math.random() * 9000 + 1000)}`,
+        vehicleSize,
+        destination: order.destination,
+        route: order.category === "PLBM" ? productPortfolio.find((p) => p.code === order.product)?.route : undefined,
+        isMixedLoad: isMixed,
+        products: [
+          {
+            product: order.product,
+            category: order.category,
+            quantity: order.confirmedQuantity,
+            weight: order.confirmedQuantity * 25, // Assume 25kg per unit
+          },
+        ],
+        estimatedWeight: order.confirmedQuantity * 25,
+        actualWeight:
+          order.status === "delivered" ? order.confirmedQuantity * 25 + Math.floor(Math.random() * 100 - 50) : null,
+        dispatchDate: dispatchDate.toISOString().split("T")[0],
+        status: order.status === "delivered" ? "completed" : "dispatched",
+        createdAt: order.orderDate + "-15",
+      })
+      dispatchId++
+    }
+  })
+
+  return dispatches
+}
+
 const productPortfolio = [
   { code: "ESS-001", category: "ESS" as ProductCategory, name: "ESS Module A", destination: "일본", unitPrice: 150 },
   { code: "ESS-002", category: "ESS" as ProductCategory, name: "ESS Module B", destination: "일본", unitPrice: 155 },
@@ -415,40 +493,25 @@ const bomData: BOM[] = [
 let ordersData: Order[] = []
 let productionsData: Production[] = []
 let materialsData: Material[] = []
-const inventoryData: Inventory[] = []
-const dispatchData: Dispatch[] = []
+let inventoryData: Inventory[] = []
+let dispatchData: Dispatch[] = []
 
 export function initializeDatabase() {
   if (ordersData.length === 0) {
+    console.log("[v0] Initializing database with comprehensive sample data...")
+
     ordersData = generateSampleOrders()
     productionsData = generateSampleProductions(ordersData)
     materialsData = [...materials]
+    inventoryData = generateSampleInventory(productionsData, ordersData)
+    dispatchData = generateSampleDispatch(inventoryData, ordersData)
 
-    // Calculate initial inventory by category
-    const inventoryMap = new Map<string, { category: ProductCategory; quantity: number }>()
-    productionsData.forEach((prod) => {
-      const order = ordersData.find((o) => o.id === prod.orderId)
-      if (order) {
-        const existing = inventoryMap.get(order.product) || { category: order.category, quantity: 0 }
-        inventoryMap.set(order.product, {
-          category: order.category,
-          quantity: existing.quantity + prod.inspectedQuantity,
-        })
-      }
-    })
-
-    let invId = 1
-    inventoryMap.forEach((data, product) => {
-      inventoryData.push({
-        id: `INV-${String(invId).padStart(6, "0")}`,
-        productionId: "",
-        product,
-        category: data.category,
-        quantity: data.quantity,
-        location: "광주창고",
-        updatedAt: new Date().toISOString(),
-      })
-      invId++
+    console.log("[v0] Database initialized:", {
+      orders: ordersData.length,
+      productions: productionsData.length,
+      materials: materialsData.length,
+      inventory: inventoryData.length,
+      dispatch: dispatchData.length,
     })
   }
 
