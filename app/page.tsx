@@ -204,7 +204,7 @@ export default function HomePage() {
     <LayoutWrapper>
       <div className="container mx-auto px-6 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">세방산업 통합 SCM 시스템</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-2">세방리튬배터리 통합 SCM 시스템</h1>
           <p className="text-muted-foreground text-lg">발주-생산-출하 관리를 한 곳에서</p>
         </div>
 
