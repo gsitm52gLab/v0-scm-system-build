@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { ClipboardList, Package, Factory, Truck, BarChart3, LogOut, User } from "lucide-react"
+import { ClipboardList, Package, Factory, Truck, BarChart3, LogOut, User, Boxes } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { Button } from "@/components/ui/button"
 import { canAccessPage } from "@/lib/auth"
@@ -23,6 +23,7 @@ export function Navigation() {
     { href: "/orders", label: "발주 계획", icon: ClipboardList, role: "발주사" },
     { href: "/sales", label: "판매 계획", icon: Package, role: "창고관리자" },
     { href: "/production", label: "생산 계획", icon: Factory, role: "생산관리자" },
+    { href: "/materials", label: "자재 관리", icon: Boxes, role: "자재관리자" },
     { href: "/dispatch", label: "배차 관리", icon: Truck, role: "창고관리자" },
   ]
 

@@ -1,6 +1,6 @@
 // Authentication and role management
 
-export type UserRole = "발주사" | "창고관리자" | "생산관리자"
+export type UserRole = "발주사" | "창고관리자" | "생산관리자" | "자재관리자"
 
 export interface User {
   id: string
@@ -45,6 +45,14 @@ export const testAccounts: User[] = [
     company: "세방산업",
     fullName: "최생산",
   },
+  {
+    id: "user005",
+    username: "material_admin",
+    password: "test123",
+    role: "자재관리자",
+    company: "세방산업",
+    fullName: "정자재",
+  },
 ]
 
 // Role-based access control
@@ -54,12 +62,16 @@ export const rolePermissions = {
     canEdit: ["/orders"],
   },
   창고관리자: {
-    canView: ["/", "/orders", "/sales", "/production", "/dispatch"],
+    canView: ["/", "/orders", "/sales", "/production", "/dispatch", "/materials"],
     canEdit: ["/sales", "/dispatch"],
   },
   생산관리자: {
-    canView: ["/", "/production"],
+    canView: ["/", "/production", "/materials"],
     canEdit: ["/production"],
+  },
+  자재관리자: {
+    canView: ["/", "/materials", "/production"],
+    canEdit: ["/materials"],
   },
 }
 
