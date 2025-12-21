@@ -24,6 +24,45 @@ import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 import { Pagination } from "@/components/pagination"
 
+function calculateWeeklyAnalytics(shipments: Shipment[]) {
+  const today = new Date("2025-12-22")
+  const daysIntoWeek = today.getDay()
+  const weekStart = new Date(today)
+  weekStart.setDate(weekStart.getDate() - daysIntoWeek + 1)
+  const weekEnd = new Date(weekStart)
+  weekEnd.setDate(weekEnd.getDate() + 6)
+
+  const thisWeekShipments = shipments.filter((s) => {
+    const shipDate = new Date(s.shipmentDate)
+    return shipDate >= weekStart && shipDate <= weekEnd
+  })
+
+  const plannedQuantity = thisWeekShipments
+    .filter((s) => s.status === "registered")
+    .reduce((sum, s) => sum + s.products.reduce((psum, p) => psum + p.quantity, 0), 0)
+
+  const completedQuantity = thisWeekShipments
+    .filter((s) => s.status === "completed")
+    .reduce((sum, s) => sum + s.products.reduce((psum, p) => psum + p.quantity, 0), 0)
+
+  const dispatchedQuantity = thisWeekShipments
+    .filter((s) => s.status === "dispatched")
+    .reduce((sum, s) => sum + s.products.reduce((psum, p) => psum + p.quantity, 0), 0)
+
+  const totalAmount = thisWeekShipments.reduce((sum, s) => sum + s.totalAmount, 0)
+
+  return {
+    weekStart: weekStart.toISOString().split("T")[0],
+    weekEnd: weekEnd.toISOString().split("T")[0],
+    plannedQuantity,
+    completedQuantity,
+    dispatchedQuantity,
+    totalShipments: thisWeekShipments.length,
+    totalAmount,
+    achievementRate: plannedQuantity > 0 ? ((completedQuantity / plannedQuantity) * 100).toFixed(1) : 0,
+  }
+}
+
 export default function ShipmentsPage() {
   const [shipments, setShipments] = useState<Shipment[]>([])
   const [selectedMonth, setSelectedMonth] = useState("2025-12")
@@ -159,6 +198,8 @@ export default function ShipmentsPage() {
     link.click()
   }
 
+  const weeklyAnalytics = calculateWeeklyAnalytics(shipments)
+
   const registeredShipments = shipments.filter((s) => s.status === "registered")
   const dispatchedShipments = shipments.filter((s) => s.status === "dispatched" || s.status === "completed")
 
@@ -189,6 +230,45 @@ export default function ShipmentsPage() {
           <Button onClick={() => setShowCreateDialog(true)}>
             <Plus className="w-4 h-4 mr-2" />새 출하지시
           </Button>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-5 mb-6">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardDescription>이번주 기간</CardDescription>
+              <CardTitle className="text-sm">
+                {weeklyAnalytics.weekStart} ~ {weeklyAnalytics.weekEnd}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardDescription>예상 출하량</CardDescription>
+              <CardTitle className="text-3xl">{weeklyAnalytics.plannedQuantity.toLocaleString()}</CardTitle>
+            </CardHeader>
+          </Card>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardDescription>출하 완료</CardDescription>
+              <CardTitle className="text-3xl text-green-600">
+                {weeklyAnalytics.completedQuantity.toLocaleString()}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardDescription>배송 중</CardDescription>
+              <CardTitle className="text-3xl text-blue-600">
+                {weeklyAnalytics.dispatchedQuantity.toLocaleString()}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardDescription>달성율</CardDescription>
+              <CardTitle className="text-3xl">{weeklyAnalytics.achievementRate}%</CardTitle>
+            </CardHeader>
+          </Card>
         </div>
 
         <div className="grid gap-6 md:grid-cols-4 mb-6">
@@ -360,8 +440,16 @@ export default function ShipmentsPage() {
                                 <TableCell>
                                   {shipment.products.reduce((sum, p) => sum + p.quantity, 0).toLocaleString()}
                                 </TableCell>
-                                <TableCell className="font-mono text-sm">{shipment.dispatchId || "-"}</TableCell>
-                                <TableCell>{shipment.dispatchInfo?.vehicleNumber || "-"}</TableCell>
+                                <TableCell className="font-mono text-sm">
+                                  {shipment.dispatchIds && shipment.dispatchIds.length > 0
+                                    ? shipment.dispatchIds.join(", ")
+                                    : "-"}
+                                </TableCell>
+                                <TableCell>
+                                  {shipment.dispatchInfo && shipment.dispatchInfo.length > 0
+                                    ? shipment.dispatchInfo.map((d) => d.vehicleNumber).join(", ")
+                                    : "-"}
+                                </TableCell>
                                 <TableCell>
                                   {shipment.status === "dispatched" ? (
                                     <Badge className="bg-blue-600">

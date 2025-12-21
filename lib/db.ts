@@ -81,8 +81,8 @@ export interface Shipment {
   }[]
   totalAmount: number
   status: "registered" | "dispatched" | "completed"
-  dispatchId?: string
-  dispatchInfo?: Dispatch
+  dispatchIds?: string[]
+  dispatchInfo?: Dispatch[]
   createdAt: string
 }
 
@@ -461,12 +461,12 @@ export function generateSampleDispatch(inventory: Inventory[], orders: Order[]):
   return dispatches
 }
 
-function generateSampleShipments(inventoryData: Inventory[], ordersData: Order[]): Shipment[] {
+function generateSampleShipments(
+  inventoryData: Inventory[],
+  ordersData: Order[],
+  dispatchData: Dispatch[],
+): Shipment[] {
   const shipments: Shipment[] = []
-  const productCategories = ["ESS", "EV", "SV", "PLBM"]
-  const destinations = ["일본 (해외)", "유럽 (해외)", "창원", "광주", "울산", "경주"]
-
-  // Generate shipments for completed and delivered productions
   const completedInventory = inventoryData.filter((inv) => inv.quantity > 0)
 
   for (let i = 0; i < Math.min(15, completedInventory.length); i++) {
@@ -477,22 +477,48 @@ function generateSampleShipments(inventoryData: Inventory[], ordersData: Order[]
       const quantity = Math.floor(inv.quantity * (0.5 + Math.random() * 0.5))
       const unitPrice = 100000 + Math.random() * 900000
 
+      const today = new Date("2025-12-22")
+      const daysIntoWeek = today.getDay()
+      const weekStart = new Date(today)
+      weekStart.setDate(weekStart.getDate() - daysIntoWeek + 1)
+
+      // Random day within this week or next week for variety
+      const targetWeekStart = Math.random() > 0.5 ? weekStart : new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000)
+      const randomDayOffset = Math.floor(Math.random() * 7)
+      const shipmentDate = new Date(targetWeekStart)
+      shipmentDate.setDate(shipmentDate.getDate() + randomDayOffset)
+
+      const assignedDispatches = dispatchData
+        .filter((d) => d.status === "planned" || d.status === "dispatched" || d.status === "completed")
+        .slice(i * 2, i * 2 + Math.floor(Math.random() * 2) + 1)
+
+      let shipmentStatus: Shipment["status"] = "registered"
+      if (assignedDispatches.length > 0) {
+        if (assignedDispatches.some((d) => d.status === "completed")) {
+          shipmentStatus = "completed"
+        } else if (assignedDispatches.some((d) => d.status === "dispatched")) {
+          shipmentStatus = "dispatched"
+        }
+      }
+
       shipments.push({
         id: `SHP-${Date.now()}-${i}`,
         shipmentNumber: `SHP-2025-${String(1001 + i).padStart(5, "0")}`,
         customer: relatedOrder.customer,
-        destination: destinations[Math.floor(Math.random() * destinations.length)],
-        shipmentDate: new Date(2025, 11, Math.floor(1 + Math.random() * 28)).toISOString().split("T")[0],
+        destination: relatedOrder.destination,
+        shipmentDate: shipmentDate.toISOString().split("T")[0],
         products: [
           {
             productCode: inv.product,
             product: inv.product,
-            category: productCategories[Math.floor(Math.random() * productCategories.length)] as ProductCategory,
+            category: inv.category,
             quantity: quantity,
           },
         ],
         totalAmount: quantity * unitPrice,
-        status: Math.random() > 0.6 ? "registered" : Math.random() > 0.5 ? "dispatched" : "completed",
+        status: shipmentStatus,
+        dispatchIds: assignedDispatches.map((d) => d.id),
+        dispatchInfo: assignedDispatches.length > 0 ? assignedDispatches : undefined,
         createdAt: new Date().toISOString(),
       })
     }
@@ -518,7 +544,7 @@ export function initializeDatabase() {
     materialsData = [...materials]
     inventoryData = generateSampleInventory(productionsData, ordersData)
     dispatchData = generateSampleDispatch(inventoryData, ordersData)
-    shipmentData = generateSampleShipments(inventoryData, ordersData)
+    shipmentData = generateSampleShipments(inventoryData, ordersData, dispatchData)
 
     console.log("[v0] Database initialized:", {
       orders: ordersData.length,
@@ -626,7 +652,7 @@ export const db = {
   shipments: {
     getAll: () => shipmentData,
     getById: (id: string) => shipmentData.find((s) => s.id === id),
-    getByDispatchId: (dispatchId: string) => shipmentData.filter((s) => s.dispatchId === dispatchId),
+    getByDispatchId: (dispatchId: string) => shipmentData.filter((s) => s.dispatchIds?.includes(dispatchId)),
     create: (shipment: Shipment) => {
       shipmentData.push(shipment)
       return shipment
