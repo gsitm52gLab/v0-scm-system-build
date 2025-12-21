@@ -14,6 +14,7 @@ export async function GET() {
         materials: data.materials.length,
         inventory: data.inventory.length,
         dispatch: data.dispatch.length,
+        shipments: data.shipments.length,
       },
     })
   } catch (error) {

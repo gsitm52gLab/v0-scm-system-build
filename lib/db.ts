@@ -461,6 +461,187 @@ export function generateSampleDispatch(inventory: Inventory[], orders: Order[]):
   return dispatches
 }
 
+function generateSampleShipments(inventoryData: Inventory[], ordersData: Order[]): Shipment[] {
+  const shipments: Shipment[] = []
+  const productCategories = ["ESS", "EV", "SV", "PLBM"]
+  const destinations = ["일본 (해외)", "유럽 (해외)", "창원", "광주", "울산", "경주"]
+
+  // Generate shipments for completed and delivered productions
+  const completedInventory = inventoryData.filter((inv) => inv.quantity > 0)
+
+  for (let i = 0; i < Math.min(15, completedInventory.length); i++) {
+    const inv = completedInventory[i]
+    const relatedOrder = ordersData.find((o) => o.product === inv.product)
+
+    if (relatedOrder) {
+      const quantity = Math.floor(inv.quantity * (0.5 + Math.random() * 0.5))
+      const unitPrice = 100000 + Math.random() * 900000
+
+      shipments.push({
+        id: `SHP-${Date.now()}-${i}`,
+        shipmentNumber: `SHP-2025-${String(1001 + i).padStart(5, "0")}`,
+        customer: relatedOrder.customer,
+        destination: destinations[Math.floor(Math.random() * destinations.length)],
+        shipmentDate: new Date(2025, 11, Math.floor(1 + Math.random() * 28)).toISOString().split("T")[0],
+        products: [
+          {
+            productCode: inv.product,
+            product: inv.product,
+            category: productCategories[Math.floor(Math.random() * productCategories.length)] as ProductCategory,
+            quantity: quantity,
+          },
+        ],
+        totalAmount: quantity * unitPrice,
+        status: Math.random() > 0.6 ? "registered" : Math.random() > 0.5 ? "dispatched" : "completed",
+        createdAt: new Date().toISOString(),
+      })
+    }
+  }
+
+  return shipments
+}
+
+// In-memory storage (will be replaced with real DB in production)
+let ordersData: Order[] = []
+let productionsData: Production[] = []
+let materialsData: Material[] = []
+let inventoryData: Inventory[] = []
+let dispatchData: Dispatch[] = []
+let shipmentData: Shipment[] = []
+
+export function initializeDatabase() {
+  if (ordersData.length === 0) {
+    console.log("[v0] Initializing database with comprehensive sample data...")
+
+    ordersData = generateSampleOrders()
+    productionsData = generateSampleProductions(ordersData)
+    materialsData = [...materials]
+    inventoryData = generateSampleInventory(productionsData, ordersData)
+    dispatchData = generateSampleDispatch(inventoryData, ordersData)
+    shipmentData = generateSampleShipments(inventoryData, ordersData)
+
+    console.log("[v0] Database initialized:", {
+      orders: ordersData.length,
+      productions: productionsData.length,
+      materials: materialsData.length,
+      inventory: inventoryData.length,
+      dispatch: dispatchData.length,
+      shipments: shipmentData.length,
+    })
+  }
+
+  return {
+    orders: ordersData,
+    productions: productionsData,
+    inventory: inventoryData,
+    dispatch: dispatchData,
+    materials: materialsData,
+    bom: bomData,
+    shipments: shipmentData,
+  }
+}
+
+// CRUD operations
+export const db = {
+  orders: {
+    getAll: () => ordersData,
+    getById: (id: string) => ordersData.find((o) => o.id === id),
+    getByMonth: (yearMonth: string) => ordersData.filter((o) => o.orderDate === yearMonth),
+    getByCustomer: (customer: string) => ordersData.filter((o) => o.customer === customer),
+    update: (id: string, data: Partial<Order>) => {
+      const index = ordersData.findIndex((o) => o.id === id)
+      if (index !== -1) {
+        ordersData[index] = { ...ordersData[index], ...data, updatedAt: new Date().toISOString() }
+        return ordersData[index]
+      }
+      return null
+    },
+    create: (order: Order) => {
+      ordersData.push(order)
+      return order
+    },
+  },
+  productions: {
+    getAll: () => productionsData,
+    getById: (id: string) => productionsData.find((p) => p.id === id),
+    getByOrderId: (orderId: string) => productionsData.filter((p) => p.orderId === orderId),
+    update: (id: string, data: Partial<Production>) => {
+      const index = productionsData.findIndex((p) => p.id === id)
+      if (index !== -1) {
+        productionsData[index] = { ...productionsData[index], ...data }
+        return productionsData[index]
+      }
+      return null
+    },
+    create: (production: Production) => {
+      productionsData.push(production)
+      return production
+    },
+  },
+  materials: {
+    getAll: () => materialsData,
+    getByCode: (code: string) => materialsData.find((m) => m.code === code),
+    update: (code: string, data: Partial<Material>) => {
+      const index = materialsData.findIndex((m) => m.code === code)
+      if (index !== -1) {
+        materialsData[index] = { ...materialsData[index], ...data, updatedAt: new Date().toISOString() }
+        return materialsData[index]
+      }
+      return null
+    },
+  },
+  bom: {
+    getByProduct: (productCode: string) => bomData.find((b) => b.productCode === productCode),
+    getAll: () => bomData,
+  },
+  inventory: {
+    getAll: () => inventoryData,
+    getByProduct: (product: string) => inventoryData.find((i) => i.product === product),
+    update: (product: string, quantity: number) => {
+      const index = inventoryData.findIndex((i) => i.product === product)
+      if (index !== -1) {
+        inventoryData[index].quantity = quantity
+        inventoryData[index].updatedAt = new Date().toISOString()
+        return inventoryData[index]
+      }
+      return null
+    },
+  },
+  dispatch: {
+    getAll: () => dispatchData,
+    getById: (id: string) => dispatchData.find((d) => d.id === id),
+    create: (dispatch: Dispatch) => {
+      dispatchData.push(dispatch)
+      return dispatch
+    },
+    update: (id: string, data: Partial<Dispatch>) => {
+      const index = dispatchData.findIndex((d) => d.id === id)
+      if (index !== -1) {
+        dispatchData[index] = { ...dispatchData[index], ...data }
+        return dispatchData[index]
+      }
+      return null
+    },
+  },
+  shipments: {
+    getAll: () => shipmentData,
+    getById: (id: string) => shipmentData.find((s) => s.id === id),
+    getByDispatchId: (dispatchId: string) => shipmentData.filter((s) => s.dispatchId === dispatchId),
+    create: (shipment: Shipment) => {
+      shipmentData.push(shipment)
+      return shipment
+    },
+    update: (id: string, data: Partial<Shipment>) => {
+      const index = shipmentData.findIndex((s) => s.id === id)
+      if (index !== -1) {
+        shipmentData[index] = { ...shipmentData[index], ...data }
+        return shipmentData[index]
+      }
+      return null
+    },
+  },
+}
+
 const productPortfolio = [
   { code: "ESS-001", category: "ESS" as ProductCategory, name: "ESS Module A", destination: "일본", unitPrice: 150 },
   { code: "ESS-002", category: "ESS" as ProductCategory, name: "ESS Module B", destination: "일본", unitPrice: 155 },
@@ -611,142 +792,3 @@ const bomData: BOM[] = [
     ],
   },
 ]
-
-// In-memory storage (will be replaced with real DB in production)
-let ordersData: Order[] = []
-let productionsData: Production[] = []
-let materialsData: Material[] = []
-let inventoryData: Inventory[] = []
-let dispatchData: Dispatch[] = []
-const shipmentData: Shipment[] = []
-
-export function initializeDatabase() {
-  if (ordersData.length === 0) {
-    console.log("[v0] Initializing database with comprehensive sample data...")
-
-    ordersData = generateSampleOrders()
-    productionsData = generateSampleProductions(ordersData)
-    materialsData = [...materials]
-    inventoryData = generateSampleInventory(productionsData, ordersData)
-    dispatchData = generateSampleDispatch(inventoryData, ordersData)
-
-    console.log("[v0] Database initialized:", {
-      orders: ordersData.length,
-      productions: productionsData.length,
-      materials: materialsData.length,
-      inventory: inventoryData.length,
-      dispatch: dispatchData.length,
-    })
-  }
-
-  return {
-    orders: ordersData,
-    productions: productionsData,
-    inventory: inventoryData,
-    dispatch: dispatchData,
-    materials: materialsData,
-    bom: bomData,
-    shipments: shipmentData,
-  }
-}
-
-// CRUD operations
-export const db = {
-  orders: {
-    getAll: () => ordersData,
-    getById: (id: string) => ordersData.find((o) => o.id === id),
-    getByMonth: (yearMonth: string) => ordersData.filter((o) => o.orderDate === yearMonth),
-    getByCustomer: (customer: string) => ordersData.filter((o) => o.customer === customer),
-    update: (id: string, data: Partial<Order>) => {
-      const index = ordersData.findIndex((o) => o.id === id)
-      if (index !== -1) {
-        ordersData[index] = { ...ordersData[index], ...data, updatedAt: new Date().toISOString() }
-        return ordersData[index]
-      }
-      return null
-    },
-    create: (order: Order) => {
-      ordersData.push(order)
-      return order
-    },
-  },
-  productions: {
-    getAll: () => productionsData,
-    getById: (id: string) => productionsData.find((p) => p.id === id),
-    getByOrderId: (orderId: string) => productionsData.filter((p) => p.orderId === orderId),
-    update: (id: string, data: Partial<Production>) => {
-      const index = productionsData.findIndex((p) => p.id === id)
-      if (index !== -1) {
-        productionsData[index] = { ...productionsData[index], ...data }
-        return productionsData[index]
-      }
-      return null
-    },
-    create: (production: Production) => {
-      productionsData.push(production)
-      return production
-    },
-  },
-  materials: {
-    getAll: () => materialsData,
-    getByCode: (code: string) => materialsData.find((m) => m.code === code),
-    update: (code: string, data: Partial<Material>) => {
-      const index = materialsData.findIndex((m) => m.code === code)
-      if (index !== -1) {
-        materialsData[index] = { ...materialsData[index], ...data, updatedAt: new Date().toISOString() }
-        return materialsData[index]
-      }
-      return null
-    },
-  },
-  bom: {
-    getByProduct: (productCode: string) => bomData.find((b) => b.productCode === productCode),
-    getAll: () => bomData,
-  },
-  inventory: {
-    getAll: () => inventoryData,
-    getByProduct: (product: string) => inventoryData.find((i) => i.product === product),
-    update: (product: string, quantity: number) => {
-      const index = inventoryData.findIndex((i) => i.product === product)
-      if (index !== -1) {
-        inventoryData[index].quantity = quantity
-        inventoryData[index].updatedAt = new Date().toISOString()
-        return inventoryData[index]
-      }
-      return null
-    },
-  },
-  dispatch: {
-    getAll: () => dispatchData,
-    getById: (id: string) => dispatchData.find((d) => d.id === id),
-    create: (dispatch: Dispatch) => {
-      dispatchData.push(dispatch)
-      return dispatch
-    },
-    update: (id: string, data: Partial<Dispatch>) => {
-      const index = dispatchData.findIndex((d) => d.id === id)
-      if (index !== -1) {
-        dispatchData[index] = { ...dispatchData[index], ...data }
-        return dispatchData[index]
-      }
-      return null
-    },
-  },
-  shipments: {
-    getAll: () => shipmentData,
-    getById: (id: string) => shipmentData.find((s) => s.id === id),
-    getByDispatchId: (dispatchId: string) => shipmentData.filter((s) => s.dispatchId === dispatchId),
-    create: (shipment: Shipment) => {
-      shipmentData.push(shipment)
-      return shipment
-    },
-    update: (id: string, data: Partial<Shipment>) => {
-      const index = shipmentData.findIndex((s) => s.id === id)
-      if (index !== -1) {
-        shipmentData[index] = { ...shipmentData[index], ...data }
-        return shipmentData[index]
-      }
-      return null
-    },
-  },
-}
