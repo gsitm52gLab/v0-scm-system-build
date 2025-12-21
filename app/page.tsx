@@ -102,12 +102,20 @@ export default function HomePage() {
   // Product distribution
   const productData = [
     {
-      name: "EV",
-      value: orders.filter((o) => o.product === "EV").reduce((sum, o) => sum + o.confirmedQuantity, 0),
+      name: "ESS",
+      value: orders.filter((o) => o.category === "ESS").reduce((sum, o) => sum + o.confirmedQuantity, 0),
     },
     {
-      name: "SUV",
-      value: orders.filter((o) => o.product === "SUV").reduce((sum, o) => sum + o.confirmedQuantity, 0),
+      name: "EV",
+      value: orders.filter((o) => o.category === "EV").reduce((sum, o) => sum + o.confirmedQuantity, 0),
+    },
+    {
+      name: "SV",
+      value: orders.filter((o) => o.category === "SV").reduce((sum, o) => sum + o.confirmedQuantity, 0),
+    },
+    {
+      name: "PLBM",
+      value: orders.filter((o) => o.category === "PLBM").reduce((sum, o) => sum + o.confirmedQuantity, 0),
     },
   ]
 
@@ -200,7 +208,7 @@ export default function HomePage() {
           <p className="text-muted-foreground text-lg">발주-생산-출하 관리를 한 곳에서</p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-4 mb-8">
+        <div className="grid gap-6 md:grid-cols-3 mb-8">
           <Card>
             <CardHeader className="pb-3">
               <CardDescription>총 발주 건수</CardDescription>
@@ -235,22 +243,6 @@ export default function HomePage() {
                   } as React.CSSProperties
                 }
               />
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardDescription>현재 재고</CardDescription>
-              <CardTitle className="text-3xl">{stats.totalInventory.toLocaleString()}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">총 보유 수량</p>
-              <div className="flex gap-2 mt-2">
-                {inventory.map((inv) => (
-                  <div key={inv.id} className="text-xs bg-secondary px-2 py-1 rounded">
-                    {inv.product}: {inv.quantity}
-                  </div>
-                ))}
-              </div>
             </CardContent>
           </Card>
           <Card>
@@ -306,28 +298,17 @@ export default function HomePage() {
           <Card>
             <CardHeader>
               <CardTitle>품목별 분포</CardTitle>
-              <CardDescription>발주 수량 기준</CardDescription>
+              <CardDescription>제품 카테고리별 발주 수량</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={productData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={(entry) =>
-                      `${entry.name}: ${((entry.value / productData.reduce((s, d) => s + d.value, 0)) * 100).toFixed(1)}%`
-                    }
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    <Cell fill={COLORS.EV} />
-                    <Cell fill={COLORS.SUV} />
-                  </Pie>
+                <BarChart data={productData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
                   <Tooltip />
-                </PieChart>
+                  <Bar dataKey="value" fill={COLORS.EV} name="수량" />
+                </BarChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>

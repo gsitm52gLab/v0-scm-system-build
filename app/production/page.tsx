@@ -4,15 +4,14 @@ import { useEffect, useState } from "react"
 import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import type { Production, Order } from "@/lib/db"
-import { CheckCircle2, Factory, AlertTriangle, Package, Calendar } from "lucide-react"
+import { AlertTriangle, Package } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Pagination } from "@/components/ui/pagination"
 
 interface ProductionWithOrder extends Production {
   order?: Order
@@ -51,6 +50,11 @@ export default function ProductionPage() {
   const [selectedProduction, setSelectedProduction] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const { toast } = useToast()
+  const [plannedPage, setPlannedPage] = useState(1)
+  const [completedPage, setCompletedPage] = useState(1)
+  const [inspectedPage, setInspectedPage] = useState(1)
+  const [showMrpDialog, setShowMrpDialog] = useState(false)
+  const itemsPerPage = 10
 
   useEffect(() => {
     fetchData()
@@ -267,116 +271,33 @@ export default function ProductionPage() {
 
   const stats = {
     planned: plannedProductions.reduce((sum, p) => sum + p.plannedQuantity, 0),
+    factory1: productions
+      .filter((p) => p.productionLine === "광주1공장")
+      .reduce((sum, p) => sum + p.plannedQuantity, 0),
+    factory2: productions
+      .filter((p) => p.productionLine === "광주2공장")
+      .reduce((sum, p) => sum + p.plannedQuantity, 0),
     completed: completedProductions.reduce((sum, p) => sum + p.inspectedQuantity, 0),
     inspected: inspectedProductions.reduce((sum, p) => sum + p.inspectedQuantity, 0),
-    factory1: factory1Productions.reduce((sum, p) => sum + p.plannedQuantity, 0),
-    factory2: factory2Productions.reduce((sum, p) => sum + p.plannedQuantity, 0),
-    materialShortages: Object.values(mrpResults).filter((r) => r.hasShortage).length,
+    materialShortages: plannedProductions.filter((p) => p.materialShortage).length,
   }
 
-  const ProductionTable = ({
-    productions,
-    showActions = true,
-  }: { productions: ProductionWithOrder[]; showActions?: boolean }) => (
-    <div className="border rounded-lg">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>생산번호</TableHead>
-            <TableHead>주문번호</TableHead>
-            <TableHead>발주사</TableHead>
-            <TableHead>품목</TableHead>
-            <TableHead>생산공장</TableHead>
-            <TableHead>라인능력</TableHead>
-            <TableHead>택타임</TableHead>
-            <TableHead>계획수량</TableHead>
-            <TableHead>검수수량</TableHead>
-            <TableHead>상태</TableHead>
-            {showActions && <TableHead className="text-right">작업</TableHead>}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {productions.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={11} className="text-center text-muted-foreground py-8">
-                생산 계획이 없습니다.
-              </TableCell>
-            </TableRow>
-          ) : (
-            productions.map((production) => {
-              const mrp = mrpResults[production.id]
-              return (
-                <TableRow key={production.id} className={mrp?.hasShortage ? "bg-red-50" : ""}>
-                  <TableCell className="font-medium">{production.id}</TableCell>
-                  <TableCell>{production.orderId}</TableCell>
-                  <TableCell>{production.order?.customer || "-"}</TableCell>
-                  <TableCell>{production.order?.product || "-"}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">
-                      <Factory className="w-3 h-3 mr-1" />
-                      {production.productionLine}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-sm">{production.lineCapacity}/일</TableCell>
-                  <TableCell className="text-sm">{production.tactTime}분</TableCell>
-                  <TableCell className="font-semibold">{production.plannedQuantity.toLocaleString()}</TableCell>
-                  <TableCell>
-                    {showActions && production.status === "planned" ? (
-                      <Input
-                        type="number"
-                        placeholder="검수 수량"
-                        value={editValues[production.id] || ""}
-                        onChange={(e) =>
-                          setEditValues((prev) => ({ ...prev, [production.id]: Number.parseInt(e.target.value) || 0 }))
-                        }
-                        className="w-32"
-                      />
-                    ) : (
-                      production.inspectedQuantity.toLocaleString()
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-col gap-1">
-                      {production.status === "planned" && <Badge variant="secondary">계획중</Badge>}
-                      {production.status === "completed" && <Badge>생산완료</Badge>}
-                      {production.status === "inspected" && <Badge className="bg-green-600">검수완료</Badge>}
-                      {mrp?.hasShortage && (
-                        <Badge variant="destructive" className="text-xs">
-                          <AlertTriangle className="w-3 h-3 mr-1" />
-                          자재부족
-                        </Badge>
-                      )}
-                    </div>
-                  </TableCell>
-                  {showActions && (
-                    <TableCell className="text-right">
-                      <div className="flex flex-col gap-2">
-                        {production.status === "planned" && !mrp?.hasShortage && (
-                          <Button size="sm" onClick={() => handleInspectProduction(production.id)}>
-                            <CheckCircle2 className="w-4 h-4 mr-1" />
-                            검수완료
-                          </Button>
-                        )}
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() =>
-                            setSelectedProduction(selectedProduction === production.id ? null : production.id)
-                          }
-                        >
-                          <Package className="w-4 h-4 mr-1" />
-                          자재확인
-                        </Button>
-                      </div>
-                    </TableCell>
-                  )}
-                </TableRow>
-              )
-            })
-          )}
-        </TableBody>
-      </Table>
-    </div>
+  const plannedTotalPages = Math.ceil(plannedProductions.length / itemsPerPage)
+  const paginatedPlannedProductions = plannedProductions.slice(
+    (plannedPage - 1) * itemsPerPage,
+    plannedPage * itemsPerPage,
+  )
+
+  const completedTotalPages = Math.ceil(completedProductions.length / itemsPerPage)
+  const paginatedCompletedProductions = completedProductions.slice(
+    (completedPage - 1) * itemsPerPage,
+    completedPage * itemsPerPage,
+  )
+
+  const inspectedTotalPages = Math.ceil(inspectedProductions.length / itemsPerPage)
+  const paginatedInspectedProductions = inspectedProductions.slice(
+    (inspectedPage - 1) * itemsPerPage,
+    inspectedPage * itemsPerPage,
   )
 
   return (
@@ -476,121 +397,118 @@ export default function ProductionPage() {
                   <TabsTrigger value="inspected">검수 완료 ({inspectedProductions.length})</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="planned" className="mt-6 space-y-6">
-                  <ProductionTable productions={plannedProductions} showActions />
+                <TabsContent value="planned" className="mt-6">
+                  <div className="grid gap-4">
+                    {paginatedPlannedProductions.map((production) => {
+                      const order = orders.find((o) => o.id === production.orderId)
+                      if (!order) return null
 
-                  {selectedProduction && mrpResults[selectedProduction] && (
-                    <Card className="border-2 border-primary">
-                      <CardHeader>
-                        <CardTitle className="flex items-center justify-between">
-                          <span>자재 소요량 분석 (MRP) - {selectedProduction}</span>
-                          <Button variant="outline" size="sm" onClick={() => setSelectedProduction(null)}>
-                            닫기
-                          </Button>
-                        </CardTitle>
-                        <CardDescription>
-                          {mrpResults[selectedProduction].product} 생산을 위한 자재 요구사항
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        {mrpResults[selectedProduction].hasShortage && (
-                          <Alert variant="destructive" className="mb-4">
-                            <AlertTriangle className="h-4 w-4" />
-                            <AlertTitle>자재 부족</AlertTitle>
-                            <AlertDescription className="flex items-center justify-between">
-                              <span>
-                                일부 자재가 부족합니다. 자재 발주 후 {mrpResults[selectedProduction].maxLeadTime}일 소요
-                                예상
-                              </span>
+                      const cardClassName = production.materialShortage ? "border-2 border-red-500 bg-red-50" : ""
+
+                      return (
+                        <Card key={production.id} className={cardClassName}>
+                          <CardHeader>
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <CardTitle className="text-lg flex items-center gap-2">
+                                  {production.id} - {order.product}
+                                  {production.materialShortage && (
+                                    <Badge variant="destructive" className="ml-2">
+                                      자재부족
+                                    </Badge>
+                                  )}
+                                </CardTitle>
+                                <CardDescription>
+                                  {production.productionLine} | 주문번호: {order.id} | 고객: {order.customer}
+                                </CardDescription>
+                              </div>
                               <Button
+                                variant="outline"
                                 size="sm"
-                                onClick={() => handleConfirmMaterialOrder(selectedProduction)}
-                                className="ml-4"
+                                onClick={() => {
+                                  setSelectedProduction(production.id)
+                                  setShowMrpDialog(true)
+                                }}
                               >
-                                자재 발주 확정
+                                <Package className="w-4 h-4 mr-2" />
+                                자재 소요량 확인
                               </Button>
-                            </AlertDescription>
-                          </Alert>
-                        )}
-
-                        <div className="border rounded-lg">
-                          <Table>
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead>자재코드</TableHead>
-                                <TableHead>자재명</TableHead>
-                                <TableHead>단위</TableHead>
-                                <TableHead>단위당 소요</TableHead>
-                                <TableHead>총 필요량</TableHead>
-                                <TableHead>현재 재고</TableHead>
-                                <TableHead>부족량</TableHead>
-                                <TableHead>공급업체</TableHead>
-                                <TableHead>리드타임</TableHead>
-                                <TableHead>예상비용</TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {mrpResults[selectedProduction].requirements.map((req) => (
-                                <TableRow key={req.materialCode} className={req.isShortage ? "bg-red-50" : ""}>
-                                  <TableCell className="font-medium">{req.materialCode}</TableCell>
-                                  <TableCell>{req.materialName}</TableCell>
-                                  <TableCell>{req.unit}</TableCell>
-                                  <TableCell>{req.requiredPerUnit}</TableCell>
-                                  <TableCell className="font-semibold">{req.totalRequired.toLocaleString()}</TableCell>
-                                  <TableCell>{req.currentStock.toLocaleString()}</TableCell>
-                                  <TableCell>
-                                    {req.isShortage ? (
-                                      <Badge variant="destructive">{req.shortage.toLocaleString()}</Badge>
-                                    ) : (
-                                      <Badge className="bg-green-600">충분</Badge>
-                                    )}
-                                  </TableCell>
-                                  <TableCell className="text-sm">{req.supplier}</TableCell>
-                                  <TableCell>
-                                    <div className="flex items-center gap-1">
-                                      <Calendar className="w-3 h-3" />
-                                      {req.leadTimeDays}일
-                                    </div>
-                                  </TableCell>
-                                  <TableCell className="font-semibold">{req.totalCost.toLocaleString()}원</TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </div>
-
-                        <div className="mt-4 p-4 bg-muted rounded-lg">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="font-semibold">생산 시작 가능일</p>
-                              <p className="text-sm text-muted-foreground">
-                                {mrpResults[selectedProduction].hasShortage
-                                  ? `자재 발주 후 ${mrpResults[selectedProduction].estimatedProductionStart}`
-                                  : "즉시 생산 가능"}
-                              </p>
                             </div>
-                            <div className="text-right">
-                              <p className="font-semibold">총 예상 비용</p>
-                              <p className="text-lg font-bold text-primary">
-                                {mrpResults[selectedProduction].requirements
-                                  .reduce((sum, r) => sum + r.totalCost, 0)
-                                  .toLocaleString()}
-                                원
-                              </p>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="flex flex-col gap-1">
+                              {production.status === "planned" && <Badge variant="secondary">계획중</Badge>}
+                              {production.status === "completed" && <Badge>생산완료</Badge>}
+                              {production.status === "inspected" && <Badge className="bg-green-600">검수완료</Badge>}
+                              {production.materialShortage && (
+                                <Badge variant="destructive" className="text-xs">
+                                  <AlertTriangle className="w-3 h-3 mr-1" />
+                                  자재부족
+                                </Badge>
+                              )}
                             </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
+                  </div>
+                  <Pagination currentPage={plannedPage} totalPages={plannedTotalPages} onPageChange={setPlannedPage} />
                 </TabsContent>
 
                 <TabsContent value="completed" className="mt-6">
-                  <ProductionTable productions={completedProductions} showActions={false} />
+                  <div className="grid gap-4">
+                    {paginatedCompletedProductions.map((production) => {
+                      return (
+                        <Card key={production.id}>
+                          <CardHeader>
+                            <CardTitle>{production.id}</CardTitle>
+                            <CardDescription>
+                              {production.productionLine} | 주문번호: {production.orderId} | 고객:{" "}
+                              {production.order?.customer || "-"}
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <p>품목: {production.order?.product || "-"}</p>
+                            <p>계획수량: {production.plannedQuantity.toLocaleString()}</p>
+                            <p>검수수량: {production.inspectedQuantity.toLocaleString()}</p>
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
+                  </div>
+                  <Pagination
+                    currentPage={completedPage}
+                    totalPages={completedTotalPages}
+                    onPageChange={setCompletedPage}
+                  />
                 </TabsContent>
 
                 <TabsContent value="inspected" className="mt-6">
-                  <ProductionTable productions={inspectedProductions} showActions={false} />
+                  <div className="grid gap-4">
+                    {paginatedInspectedProductions.map((production) => {
+                      return (
+                        <Card key={production.id}>
+                          <CardHeader>
+                            <CardTitle>{production.id}</CardTitle>
+                            <CardDescription>
+                              {production.productionLine} | 주문번호: {production.orderId} | 고객:{" "}
+                              {production.order?.customer || "-"}
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <p>품목: {production.order?.product || "-"}</p>
+                            <p>계획수량: {production.plannedQuantity.toLocaleString()}</p>
+                            <p>검수수량: {production.inspectedQuantity.toLocaleString()}</p>
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
+                  </div>
+                  <Pagination
+                    currentPage={inspectedPage}
+                    totalPages={inspectedTotalPages}
+                    onPageChange={setInspectedPage}
+                  />
                 </TabsContent>
               </Tabs>
             )}

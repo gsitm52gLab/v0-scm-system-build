@@ -14,6 +14,7 @@ import { Download, Upload, Save, Package, TruckIcon, Clock } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 import { useAuth } from "@/components/auth-provider"
+import { Pagination } from "@/components/pagination"
 
 export default function OrdersPage() {
   const { user } = useAuth()
@@ -22,6 +23,10 @@ export default function OrdersPage() {
   const [selectedCustomer, setSelectedCustomer] = useState<string>("all")
   const [loading, setLoading] = useState(true)
   const { toast } = useToast()
+
+  const [currentPage, setCurrentPage] = useState(1)
+  const [deliveryPage, setDeliveryPage] = useState(1)
+  const itemsPerPage = 10
 
   useEffect(() => {
     initializeData()
@@ -155,6 +160,9 @@ export default function OrdersPage() {
     selectedCustomer === "all" ? true : order.customer === selectedCustomer,
   )
 
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage)
+  const paginatedOrders = filteredOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+
   const stats = {
     total: filteredOrders.reduce((sum, o) => sum + o.predictedQuantity, 0),
     confirmed: filteredOrders.reduce((sum, o) => sum + o.confirmedQuantity, 0),
@@ -164,10 +172,15 @@ export default function OrdersPage() {
     shipped: filteredOrders.filter((o) => o.status === "shipped" || o.status === "delivered").length,
   }
 
+  const monthlyAverage = Math.round(stats.confirmedAmount / Math.max(1, filteredOrders.length))
+
   const deliveryOrders = orders.filter(
     (o) =>
       o.status === "approved" || o.status === "in_production" || o.status === "shipped" || o.status === "delivered",
   )
+
+  const deliveryTotalPages = Math.ceil(deliveryOrders.length / itemsPerPage)
+  const paginatedDeliveryOrders = deliveryOrders.slice((deliveryPage - 1) * itemsPerPage, deliveryPage * itemsPerPage)
 
   return (
     <LayoutWrapper>
@@ -213,7 +226,7 @@ export default function OrdersPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardDescription>월평균 금액</CardDescription>
-              <CardTitle className="text-2xl">{Math.round(stats.confirmedAmount / 1).toLocaleString()}만원</CardTitle>
+              <CardTitle className="text-2xl">{monthlyAverage.toLocaleString()}만원</CardTitle>
             </CardHeader>
           </Card>
         </div>
@@ -232,7 +245,13 @@ export default function OrdersPage() {
                 <div className="flex items-center justify-between">
                   <CardTitle>발주 데이터</CardTitle>
                   <div className="flex items-center gap-3">
-                    <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                    <Select
+                      value={selectedMonth}
+                      onValueChange={(value) => {
+                        setSelectedMonth(value)
+                        setCurrentPage(1)
+                      }}
+                    >
                       <SelectTrigger className="w-[180px]">
                         <SelectValue />
                       </SelectTrigger>
@@ -244,7 +263,13 @@ export default function OrdersPage() {
                     </Select>
 
                     {user?.role !== "customer" && (
-                      <Select value={selectedCustomer} onValueChange={setSelectedCustomer}>
+                      <Select
+                        value={selectedCustomer}
+                        onValueChange={(value) => {
+                          setSelectedCustomer(value)
+                          setCurrentPage(1)
+                        }}
+                      >
                         <SelectTrigger className="w-[180px]">
                           <SelectValue />
                         </SelectTrigger>
@@ -275,7 +300,10 @@ export default function OrdersPage() {
                 {loading ? (
                   <div className="text-center py-8 text-muted-foreground">데이터를 불러오는 중...</div>
                 ) : (
-                  <OrderTable orders={filteredOrders} onUpdate={handleUpdate} editable />
+                  <>
+                    <OrderTable orders={paginatedOrders} onUpdate={handleUpdate} editable />
+                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                  </>
                 )}
               </CardContent>
             </Card>
@@ -291,83 +319,90 @@ export default function OrdersPage() {
                 {loading ? (
                   <div className="text-center py-8 text-muted-foreground">데이터를 불러오는 중...</div>
                 ) : (
-                  <div className="border rounded-lg">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>주문번호</TableHead>
-                          <TableHead>발주사</TableHead>
-                          <TableHead>품목</TableHead>
-                          <TableHead>수량</TableHead>
-                          <TableHead>금액</TableHead>
-                          <TableHead>리드타임</TableHead>
-                          <TableHead>예상 도착일</TableHead>
-                          <TableHead>상태</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {deliveryOrders.length === 0 ? (
+                  <>
+                    <div className="border rounded-lg">
+                      <Table>
+                        <TableHeader>
                           <TableRow>
-                            <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
-                              배송 중인 주문이 없습니다.
-                            </TableCell>
+                            <TableHead>주문번호</TableHead>
+                            <TableHead>발주사</TableHead>
+                            <TableHead>품목</TableHead>
+                            <TableHead>수량</TableHead>
+                            <TableHead>금액</TableHead>
+                            <TableHead>리드타임</TableHead>
+                            <TableHead>예상 도착일</TableHead>
+                            <TableHead>상태</TableHead>
                           </TableRow>
-                        ) : (
-                          deliveryOrders.map((order) => {
-                            const leadTime = (() => {
-                              const leadTimes = { ESS: 30, EV: 21, SV: 14, PLBM: 18 }
-                              return leadTimes[order.category]
-                            })()
+                        </TableHeader>
+                        <TableBody>
+                          {paginatedDeliveryOrders.length === 0 ? (
+                            <TableRow>
+                              <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                                배송 중인 주문이 없습니다.
+                              </TableCell>
+                            </TableRow>
+                          ) : (
+                            paginatedDeliveryOrders.map((order) => {
+                              const leadTime = (() => {
+                                const leadTimes = { ESS: 30, EV: 21, SV: 14, PLBM: 18 }
+                                return leadTimes[order.category]
+                              })()
 
-                            return (
-                              <TableRow key={order.id}>
-                                <TableCell className="font-medium">{order.id}</TableCell>
-                                <TableCell>{order.customer}</TableCell>
-                                <TableCell>{order.product}</TableCell>
-                                <TableCell>{order.confirmedQuantity.toLocaleString()}</TableCell>
-                                <TableCell className="font-semibold">
-                                  {(order.confirmedQuantity * order.unitPrice).toLocaleString()}만원
-                                </TableCell>
-                                <TableCell>
-                                  <div className="flex items-center gap-1">
-                                    <Clock className="w-4 h-4 text-muted-foreground" />
-                                    {leadTime}일
-                                  </div>
-                                </TableCell>
-                                <TableCell>{order.estimatedDeliveryDate}</TableCell>
-                                <TableCell>
-                                  {order.status === "approved" && (
-                                    <Badge variant="secondary">
-                                      <Package className="w-3 h-3 mr-1" />
-                                      승인완료
-                                    </Badge>
-                                  )}
-                                  {order.status === "in_production" && (
-                                    <Badge className="bg-orange-600">
-                                      <Package className="w-3 h-3 mr-1" />
-                                      생산중
-                                    </Badge>
-                                  )}
-                                  {order.status === "shipped" && (
-                                    <Badge className="bg-blue-600">
-                                      <TruckIcon className="w-3 h-3 mr-1" />
-                                      출하완료
-                                    </Badge>
-                                  )}
-                                  {order.status === "delivered" && (
-                                    <Badge className="bg-green-600">
-                                      <TruckIcon className="w-3 h-3 mr-1" />
-                                      배송완료
-                                    </Badge>
-                                  )}
-                                </TableCell>
-                              </TableRow>
-                            )
-                          })
-                        )}
-                      </TableBody>
-                    </Table>
-                  </div>
+                              return (
+                                <TableRow key={order.id}>
+                                  <TableCell className="font-medium">{order.id}</TableCell>
+                                  <TableCell>{order.customer}</TableCell>
+                                  <TableCell>{order.product}</TableCell>
+                                  <TableCell>{order.confirmedQuantity.toLocaleString()}</TableCell>
+                                  <TableCell className="font-semibold">
+                                    {(order.confirmedQuantity * order.unitPrice).toLocaleString()}만원
+                                  </TableCell>
+                                  <TableCell>
+                                    <div className="flex items-center gap-1">
+                                      <Clock className="w-4 h-4 text-muted-foreground" />
+                                      {leadTime}일
+                                    </div>
+                                  </TableCell>
+                                  <TableCell>{order.estimatedDeliveryDate}</TableCell>
+                                  <TableCell>
+                                    {order.status === "approved" && (
+                                      <Badge variant="secondary">
+                                        <Package className="w-3 h-3 mr-1" />
+                                        승인완료
+                                      </Badge>
+                                    )}
+                                    {order.status === "in_production" && (
+                                      <Badge className="bg-orange-600">
+                                        <Package className="w-3 h-3 mr-1" />
+                                        생산중
+                                      </Badge>
+                                    )}
+                                    {order.status === "shipped" && (
+                                      <Badge className="bg-blue-600">
+                                        <TruckIcon className="w-3 h-3 mr-1" />
+                                        출하완료
+                                      </Badge>
+                                    )}
+                                    {order.status === "delivered" && (
+                                      <Badge className="bg-green-600">
+                                        <TruckIcon className="w-3 h-3 mr-1" />
+                                        배송완료
+                                      </Badge>
+                                    )}
+                                  </TableCell>
+                                </TableRow>
+                              )
+                            })
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
+                    <Pagination
+                      currentPage={deliveryPage}
+                      totalPages={deliveryTotalPages}
+                      onPageChange={setDeliveryPage}
+                    />
+                  </>
                 )}
               </CardContent>
             </Card>

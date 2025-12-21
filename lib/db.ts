@@ -109,6 +109,7 @@ export function generateSampleOrders(): Order[] {
     const yearMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
     const currentMonth = new Date("2025-12-01")
     const isHistorical = d < new Date("2025-11-01")
+    const isNovember = yearMonth === "2025-11"
     const isCurrentMonth = yearMonth === "2025-12"
     const isNextMonth = yearMonth > "2025-12"
     const orderDate = new Date(yearMonth + "-15")
@@ -124,6 +125,10 @@ export function generateSampleOrders(): Order[] {
     if (isHistorical) {
       const rand = Math.random()
       status = rand > 0.7 ? "delivered" : rand > 0.4 ? "shipped" : "in_production"
+    } else if (isNovember) {
+      // 11월 데이터: confirmed, shipped, delivered 상태 혼합
+      const rand = Math.random()
+      status = rand > 0.6 ? "delivered" : rand > 0.3 ? "shipped" : "confirmed"
     } else if (isCurrentMonth) {
       const rand = Math.random()
       status = rand > 0.6 ? "confirmed" : rand > 0.3 ? "approved" : "predicted"
@@ -149,11 +154,11 @@ export function generateSampleOrders(): Order[] {
       updatedAt: yearMonth + "-01",
     })
 
-    // EV orders
+    // EV orders - 현대차와 삼성SDI 모두 생성
     ;["현대차", "삼성SDI"].forEach((customer) => {
       const evProducts = productPortfolio.filter((p) => p.category === "EV")
       evProducts.forEach((product) => {
-        const baseQuantity = customer === "현대차" ? 500 : 400
+        const baseQuantity = customer === "현대차" ? 500 : 350
         const variance = Math.floor(Math.random() * 200) - 100
         const quantity = Math.max(100, baseQuantity + variance)
         const leadTime = calculateLeadTime("EV")
@@ -164,6 +169,9 @@ export function generateSampleOrders(): Order[] {
         if (isHistorical) {
           const rand = Math.random()
           evStatus = rand > 0.7 ? "delivered" : rand > 0.4 ? "shipped" : "in_production"
+        } else if (isNovember) {
+          const rand = Math.random()
+          evStatus = rand > 0.6 ? "delivered" : rand > 0.3 ? "shipped" : "confirmed"
         } else if (isCurrentMonth) {
           const rand = Math.random()
           evStatus = rand > 0.6 ? "confirmed" : rand > 0.3 ? "approved" : "predicted"
@@ -203,6 +211,9 @@ export function generateSampleOrders(): Order[] {
       if (isHistorical) {
         const rand = Math.random()
         svStatus = rand > 0.7 ? "delivered" : rand > 0.4 ? "shipped" : "in_production"
+      } else if (isNovember) {
+        const rand = Math.random()
+        svStatus = rand > 0.6 ? "delivered" : rand > 0.3 ? "shipped" : "confirmed"
       } else if (isCurrentMonth) {
         const rand = Math.random()
         svStatus = rand > 0.6 ? "confirmed" : rand > 0.3 ? "approved" : "predicted"
@@ -241,6 +252,9 @@ export function generateSampleOrders(): Order[] {
       if (isHistorical) {
         const rand = Math.random()
         plbmStatus = rand > 0.7 ? "delivered" : rand > 0.4 ? "shipped" : "in_production"
+      } else if (isNovember) {
+        const rand = Math.random()
+        plbmStatus = rand > 0.6 ? "delivered" : rand > 0.3 ? "shipped" : "confirmed"
       } else if (isCurrentMonth) {
         const rand = Math.random()
         plbmStatus = rand > 0.6 ? "confirmed" : rand > 0.3 ? "approved" : "predicted"
@@ -275,13 +289,18 @@ export function generateSampleProductions(orders: Order[]): Production[] {
   const productions: Production[] = []
   const productionOrders = orders.filter(
     (o) =>
-      o.status === "approved" || o.status === "in_production" || o.status === "shipped" || o.status === "delivered",
+      o.status === "approved" ||
+      o.status === "in_production" ||
+      o.status === "shipped" ||
+      o.status === "delivered" ||
+      o.status === "confirmed",
   )
   let prodId = 1
 
   productionOrders.forEach((order) => {
     if (order.confirmedQuantity === 0) return
 
+    // EV는 광주1공장, 나머지는 광주2공장
     const productionLine = order.category === "EV" ? "광주1공장" : "광주2공장"
     const lineCapacity = productionLine === "광주1공장" ? 1000 : 800
     const tactTime = order.category === "EV" ? 30 : 45
@@ -296,10 +315,15 @@ export function generateSampleProductions(orders: Order[]): Production[] {
     actualStartDate.setDate(actualStartDate.getDate() + Math.floor(Math.random() * 3))
 
     let productionStatus: Production["status"]
+    // 자재 부족 설정: 일부 planned 상태에 자재 부족 플래그
+    const hasMaterialShortage = order.status === "confirmed" && Math.random() > 0.6
+
     if (order.status === "delivered" || order.status === "shipped") {
       productionStatus = "inspected"
     } else if (order.status === "in_production") {
       productionStatus = Math.random() > 0.5 ? "in_progress" : "completed"
+    } else if (order.status === "confirmed") {
+      productionStatus = "planned"
     } else {
       productionStatus = "planned"
     }
@@ -319,7 +343,7 @@ export function generateSampleProductions(orders: Order[]): Production[] {
           ? actualStartDate.toISOString().split("T")[0]
           : undefined,
       status: productionStatus,
-      materialShortage: productionStatus === "planned" && Math.random() > 0.7,
+      materialShortage: hasMaterialShortage,
       createdAt: order.orderDate + "-01",
     })
     prodId++
