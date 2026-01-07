@@ -1,50 +1,63 @@
 import { NextResponse } from "next/server"
-import { db, initializeDatabase, type MaterialRequirement } from "@/lib/db"
+import { initializeDatabase, db } from "@/lib/db"
 
-initializeDatabase()
-
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    const { searchParams } = new URL(request.url)
-    const productionId = searchParams.get("productionId")
+    initializeDatabase()
 
-    if (productionId) {
-      const requirements = db.materialRequirements.getByProductionId(productionId)
-      return NextResponse.json({ success: true, data: requirements })
-    }
+    console.log("[v0] Calculating material requirements...")
 
-    const allRequirements = db.materialRequirements.getAll()
-    return NextResponse.json({ success: true, data: allRequirements })
+    const productions = db.productions.getAll().filter((p) => p.status === "planned" || p.status === "in_progress")
+    const materials = db.materials.getAll()
+    const orders = db.orders.getAll()
+    const bom = db.bom.getAll()
+
+    console.log("[v0] Productions for MRP:", productions.length)
+    console.log("[v0] Materials available:", materials.length)
+
+    // Calculate total requirements
+    const requirements = materials.map((material) => {
+      let totalRequired = 0
+
+      // Calculate from all planned and in-progress productions
+      productions.forEach((production) => {
+        const order = orders.find((o) => o.id === production.orderId)
+        if (!order) return
+
+        const productBom = bom.find((b) => b.productCode === order.product)
+        if (!productBom) return
+
+        const materialReq = productBom.materials.find((m) => m.materialCode === material.code)
+        if (materialReq) {
+          totalRequired += materialReq.quantity * production.plannedQuantity
+        }
+      })
+
+      const shortage = Math.max(0, totalRequired - material.currentStock)
+
+      return {
+        material,
+        required: totalRequired,
+        available: material.currentStock,
+        shortage,
+        orderNeeded: shortage > 0,
+      }
+    })
+
+    console.log("[v0] Material requirements calculated:", requirements.length)
+
+    return NextResponse.json({
+      success: true,
+      data: requirements,
+    })
   } catch (error) {
-    console.error("[v0] Material requirements API error:", error)
-    return NextResponse.json({ success: false, error: "Failed to fetch material requirements" }, { status: 500 })
-  }
-}
-
-export async function POST(request: Request) {
-  try {
-    const body = await request.json()
-    const requirement = db.materialRequirements.create(body as MaterialRequirement)
-    return NextResponse.json({ success: true, data: requirement })
-  } catch (error) {
-    console.error("[v0] Material requirement creation error:", error)
-    return NextResponse.json({ success: false, error: "Failed to create material requirement" }, { status: 500 })
-  }
-}
-
-export async function PUT(request: Request) {
-  try {
-    const body = await request.json()
-    const { id, ...data } = body
-
-    const updated = db.materialRequirements.update(id, data)
-    if (!updated) {
-      return NextResponse.json({ success: false, error: "Material requirement not found" }, { status: 404 })
-    }
-
-    return NextResponse.json({ success: true, data: updated })
-  } catch (error) {
-    console.error("[v0] Material requirement update error:", error)
-    return NextResponse.json({ success: false, error: "Failed to update material requirement" }, { status: 500 })
+    console.error("[v0] Material requirements error:", error)
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to calculate material requirements",
+      },
+      { status: 500 },
+    )
   }
 }

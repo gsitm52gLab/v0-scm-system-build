@@ -1,6 +1,6 @@
 // Authentication and role management
 
-export type UserRole = "발주사" | "창고관리자" | "생산관리자"
+export type UserRole = "발주사" | "창고관리자" | "생산관리자" | "자재관리자" | "shipments"
 
 export interface User {
   id: string
@@ -34,7 +34,7 @@ export const testAccounts: User[] = [
     username: "warehouse_admin",
     password: "test123",
     role: "창고관리자",
-    company: "세방산업",
+    company: "세방리튬배터리",
     fullName: "박창고",
   },
   {
@@ -42,8 +42,24 @@ export const testAccounts: User[] = [
     username: "production_admin",
     password: "test123",
     role: "생산관리자",
-    company: "세방산업",
+    company: "세방리튬배터리",
     fullName: "최생산",
+  },
+  {
+    id: "user005",
+    username: "material_admin",
+    password: "test123",
+    role: "자재관리자",
+    company: "세방리튬배터리",
+    fullName: "정자재",
+  },
+  {
+    id: "user006",
+    username: "shipments_admin",
+    password: "test123",
+    role: "shipments",
+    company: "세방리튬배터리",
+    fullName: "송출관리자",
   },
 ]
 
@@ -54,12 +70,20 @@ export const rolePermissions = {
     canEdit: ["/orders"],
   },
   창고관리자: {
-    canView: ["/", "/orders", "/sales", "/production", "/dispatch"],
-    canEdit: ["/sales", "/dispatch"],
+    canView: ["/", "/orders", "/sales", "/production", "/dispatch", "/materials", "/shipments"],
+    canEdit: ["/sales", "/dispatch", "/shipments"],
   },
   생산관리자: {
-    canView: ["/", "/production"],
+    canView: ["/", "/production", "/materials"],
     canEdit: ["/production"],
+  },
+  자재관리자: {
+    canView: ["/", "/materials", "/production"],
+    canEdit: ["/materials"],
+  },
+  shipments: {
+    canView: ["/", "/shipments"],
+    canEdit: ["/shipments"],
   },
 }
 

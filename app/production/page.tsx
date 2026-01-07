@@ -1,53 +1,84 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Navigation } from "@/components/navigation"
+import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import type { Production, Order, Material, MaterialRequirement } from "@/lib/db"
-import { CheckCircle2, Factory, AlertTriangle, ShoppingCart } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import type { Production, Order } from "@/lib/db"
+import { AlertTriangle, Package } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Pagination } from "@/components/ui/pagination"
 
 interface ProductionWithOrder extends Production {
   order?: Order
+}
+
+interface MaterialRequirement {
+  materialCode: string
+  materialName: string
+  unit: string
+  requiredPerUnit: number
+  totalRequired: number
+  currentStock: number
+  shortage: number
+  isShortage: boolean
+  supplier: string
+  leadTimeDays: number
+  unitPrice: number
+  totalCost: number
+}
+
+interface MRPResult {
+  productionId: string
+  product: string
+  plannedQuantity: number
+  requirements: MaterialRequirement[]
+  hasShortage: boolean
+  maxLeadTime: number
+  estimatedProductionStart: string
 }
 
 export default function ProductionPage() {
   const [productions, setProductions] = useState<ProductionWithOrder[]>([])
   const [orders, setOrders] = useState<Order[]>([])
   const [editValues, setEditValues] = useState<Record<string, number>>({})
+  const [mrpResults, setMrpResults] = useState<Record<string, MRPResult>>({})
+  const [selectedProduction, setSelectedProduction] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
-  const [materials, setMaterials] = useState<Material[]>([])
-  const [materialRequirements, setMaterialRequirements] = useState<MaterialRequirement[]>([])
-  const [showMaterialAlert, setShowMaterialAlert] = useState(false)
   const { toast } = useToast()
+  const [plannedPage, setPlannedPage] = useState(1)
+  const [completedPage, setCompletedPage] = useState(1)
+  const [inspectedPage, setInspectedPage] = useState(1)
+  const [showMrpDialog, setShowMrpDialog] = useState(false)
+  const itemsPerPage = 10
 
   useEffect(() => {
     fetchData()
   }, [])
 
+  useEffect(() => {
+    const checkMRP = async () => {
+      for (const production of productions.filter((p) => p.status === "planned")) {
+        if (!mrpResults[production.id]) {
+          await calculateMRP(production.id)
+        }
+      }
+    }
+    if (productions.length > 0) {
+      checkMRP()
+    }
+  }, [productions])
+
   const fetchData = async () => {
     setLoading(true)
     try {
-      const [prodResponse, orderResponse, materialsResponse, requirementsResponse] = await Promise.all([
-        fetch("/api/productions"),
-        fetch("/api/orders"),
-        fetch("/api/materials"),
-        fetch("/api/material-requirements"),
-      ])
+      const [prodResponse, orderResponse] = await Promise.all([fetch("/api/productions"), fetch("/api/orders")])
 
-      const [prodData, orderData, materialsData, requirementsData] = await Promise.all([
-        prodResponse.json(),
-        orderResponse.json(),
-        materialsResponse.json(),
-        requirementsResponse.json(),
-      ])
+      const [prodData, orderData] = await Promise.all([prodResponse.json(), orderResponse.json()])
 
       if (prodData.success && orderData.success) {
         const ordersMap = new Map(orderData.data.map((o: Order) => [o.id, o]))
@@ -59,16 +90,6 @@ export default function ProductionPage() {
         setProductions(productionsWithOrders)
         setOrders(orderData.data)
       }
-
-      if (materialsData.success) {
-        setMaterials(materialsData.data)
-      }
-
-      if (requirementsData.success) {
-        setMaterialRequirements(requirementsData.data)
-      }
-
-      checkMaterialShortages(prodData.data, materialsData.data)
     } catch (error) {
       console.error("[v0] Failed to fetch data:", error)
       toast({
@@ -81,34 +102,58 @@ export default function ProductionPage() {
     }
   }
 
-  const checkMaterialShortages = (productions: Production[], materials: Material[]) => {
-    const plannedProductions = productions.filter((p) => p.status === "planned")
+  const calculateMRP = async (productionId: string) => {
+    try {
+      const response = await fetch("/api/mrp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productionId }),
+      })
 
-    if (plannedProductions.length > 0) {
-      const hasShortage = materials.some((m) => m.currentStock < m.minStock)
-      setShowMaterialAlert(hasShortage)
+      const result = await response.json()
+      setMrpResults((prev) => ({ ...prev, [productionId]: result }))
+
+      if (result.hasShortage) {
+        toast({
+          title: "자재 부족 알림",
+          description: `${result.product} 생산을 위한 자재가 부족합니다.`,
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("[v0] Failed to calculate MRP:", error)
     }
   }
 
-  const handleConfirmMaterialOrder = async () => {
+  const handleConfirmMaterialOrder = async (productionId: string) => {
+    const mrp = mrpResults[productionId]
+    if (!mrp || !mrp.hasShortage) return
+
     try {
-      const shortfallMaterials = materials.filter((m) => m.currentStock < m.minStock)
+      const materialsToOrder = mrp.requirements
+        .filter((r) => r.isShortage)
+        .map((r) => ({
+          materialCode: r.materialCode,
+          orderQuantity: r.shortage,
+        }))
 
-      for (const material of shortfallMaterials) {
-        const orderDate = new Date()
-        const expectedArrival = new Date(orderDate.getTime() + material.leadTimeDays * 24 * 60 * 60 * 1000)
+      const response = await fetch("/api/mrp", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ materials: materialsToOrder }),
+      })
 
+      const result = await response.json()
+      if (result.success) {
         toast({
           title: "자재 발주 완료",
-          description: `${material.name}: ${expectedArrival.toLocaleDateString("ko-KR")}에 입고 예정 (리드타임: ${material.leadTimeDays}일)`,
+          description: `${mrp.maxLeadTime}일 후 생산 가능합니다. (${mrp.estimatedProductionStart})`,
         })
-      }
 
-      setShowMaterialAlert(false)
-      toast({
-        title: "생산 가능 알림",
-        description: `자재 입고 후 생산이 가능합니다. 예상 생산 개시일: ${new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString("ko-KR")}`,
-      })
+        // Refresh MRP calculation
+        await calculateMRP(productionId)
+        await fetchData()
+      }
     } catch (error) {
       console.error("[v0] Failed to order materials:", error)
       toast({
@@ -226,128 +271,54 @@ export default function ProductionPage() {
 
   const stats = {
     planned: plannedProductions.reduce((sum, p) => sum + p.plannedQuantity, 0),
+    factory1: productions
+      .filter((p) => p.productionLine === "광주1공장")
+      .reduce((sum, p) => sum + p.plannedQuantity, 0),
+    factory2: productions
+      .filter((p) => p.productionLine === "광주2공장")
+      .reduce((sum, p) => sum + p.plannedQuantity, 0),
     completed: completedProductions.reduce((sum, p) => sum + p.inspectedQuantity, 0),
     inspected: inspectedProductions.reduce((sum, p) => sum + p.inspectedQuantity, 0),
-    factory1: factory1Productions.reduce((sum, p) => sum + p.plannedQuantity, 0),
-    factory2: factory2Productions.reduce((sum, p) => sum + p.plannedQuantity, 0),
+    materialShortages: plannedProductions.filter((p) => p.materialShortage).length,
   }
 
-  const ProductionTable = ({
-    productions,
-    showActions = true,
-  }: { productions: ProductionWithOrder[]; showActions?: boolean }) => (
-    <div className="border rounded-lg">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>생산번호</TableHead>
-            <TableHead>주문번호</TableHead>
-            <TableHead>발주사</TableHead>
-            <TableHead>품목</TableHead>
-            <TableHead>생산공장</TableHead>
-            <TableHead>계획수량</TableHead>
-            <TableHead>검수수량</TableHead>
-            <TableHead>상태</TableHead>
-            {showActions && <TableHead className="text-right">작업</TableHead>}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {productions.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={9} className="text-center text-muted-foreground py-8">
-                생산 계획이 없습니다.
-              </TableCell>
-            </TableRow>
-          ) : (
-            productions.map((production) => (
-              <TableRow key={production.id}>
-                <TableCell className="font-medium">{production.id}</TableCell>
-                <TableCell>{production.orderId}</TableCell>
-                <TableCell>{production.order?.customer || "-"}</TableCell>
-                <TableCell>{production.order?.product || "-"}</TableCell>
-                <TableCell>
-                  <Badge variant="outline">
-                    <Factory className="w-3 h-3 mr-1" />
-                    {production.productionLine}
-                  </Badge>
-                </TableCell>
-                <TableCell className="font-semibold">{production.plannedQuantity.toLocaleString()}</TableCell>
-                <TableCell>
-                  {showActions && production.status === "planned" ? (
-                    <Input
-                      type="number"
-                      placeholder="검수 수량"
-                      value={editValues[production.id] || ""}
-                      onChange={(e) =>
-                        setEditValues((prev) => ({ ...prev, [production.id]: Number.parseInt(e.target.value) || 0 }))
-                      }
-                      className="w-32"
-                    />
-                  ) : (
-                    production.inspectedQuantity.toLocaleString()
-                  )}
-                </TableCell>
-                <TableCell>
-                  {production.status === "planned" && <Badge variant="secondary">계획중</Badge>}
-                  {production.status === "completed" && <Badge>생산완료</Badge>}
-                  {production.status === "inspected" && <Badge className="bg-green-600">검수완료</Badge>}
-                </TableCell>
-                {showActions && (
-                  <TableCell className="text-right">
-                    {production.status === "planned" && (
-                      <Button size="sm" onClick={() => handleInspectProduction(production.id)}>
-                        <CheckCircle2 className="w-4 h-4 mr-1" />
-                        검수완료
-                      </Button>
-                    )}
-                  </TableCell>
-                )}
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </div>
+  const plannedTotalPages = Math.ceil(plannedProductions.length / itemsPerPage)
+  const paginatedPlannedProductions = plannedProductions.slice(
+    (plannedPage - 1) * itemsPerPage,
+    plannedPage * itemsPerPage,
   )
 
-  const insufficientMaterials = materials.filter((m) => m.currentStock < m.minStock)
+  const completedTotalPages = Math.ceil(completedProductions.length / itemsPerPage)
+  const paginatedCompletedProductions = completedProductions.slice(
+    (completedPage - 1) * itemsPerPage,
+    completedPage * itemsPerPage,
+  )
+
+  const inspectedTotalPages = Math.ceil(inspectedProductions.length / itemsPerPage)
+  const paginatedInspectedProductions = inspectedProductions.slice(
+    (inspectedPage - 1) * itemsPerPage,
+    inspectedPage * itemsPerPage,
+  )
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-
-      <div className="container mx-auto px-4 py-8">
+    <LayoutWrapper>
+      <div className="container mx-auto px-6 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground">생산 계획</h1>
-          <p className="text-muted-foreground mt-1">
-            공장별 생산 계획을 확인하고 일자별 입고(생산완료) 수량을 입력합니다
-          </p>
+          <p className="text-muted-foreground mt-1">공장별 생산 계획을 확인하고 자재 소요량(MRP)을 관리합니다</p>
         </div>
 
-        {showMaterialAlert && insufficientMaterials.length > 0 && (
-          <Alert className="mb-6 border-orange-500 bg-orange-50">
-            <AlertTriangle className="h-5 w-5 text-orange-600" />
-            <AlertTitle className="text-orange-900">자재 부족 알림</AlertTitle>
-            <AlertDescription className="text-orange-800">
-              <div className="mt-2 space-y-2">
-                <p className="font-semibold">다음 자재가 부족합니다:</p>
-                <ul className="list-disc list-inside space-y-1">
-                  {insufficientMaterials.map((m) => (
-                    <li key={m.id}>
-                      {m.name}: 현재 {m.currentStock.toLocaleString()}개 (최소 {m.minStock.toLocaleString()}개 필요)
-                    </li>
-                  ))}
-                </ul>
-                <Button onClick={handleConfirmMaterialOrder} className="mt-3" size="sm">
-                  <ShoppingCart className="w-4 h-4 mr-2" />
-                  자재 발주 확정
-                </Button>
-              </div>
+        {stats.materialShortages > 0 && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>자재 부족 알림</AlertTitle>
+            <AlertDescription>
+              {stats.materialShortages}건의 생산 계획에 필요한 자재가 부족합니다. 자재 발주를 진행해주세요.
             </AlertDescription>
           </Alert>
         )}
 
-        <div className="grid gap-6 md:grid-cols-5 mb-6">
+        <div className="grid gap-6 md:grid-cols-6 mb-6">
           <Card>
             <CardHeader className="pb-3">
               <CardDescription>계획 수량</CardDescription>
@@ -393,6 +364,15 @@ export default function ProductionPage() {
               <p className="text-sm text-muted-foreground">재고 반영</p>
             </CardContent>
           </Card>
+          <Card className={stats.materialShortages > 0 ? "border-red-500" : ""}>
+            <CardHeader className="pb-3">
+              <CardDescription>자재 부족</CardDescription>
+              <CardTitle className="text-3xl text-red-600">{stats.materialShortages}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">발주 필요</p>
+            </CardContent>
+          </Card>
         </div>
 
         <Card>
@@ -404,80 +384,138 @@ export default function ProductionPage() {
               <div className="text-center py-8 text-muted-foreground">데이터를 불러오는 중...</div>
             ) : (
               <Tabs defaultValue="planned" className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="planned">생산 계획 ({plannedProductions.length})</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="planned">
+                    생산 계획 ({plannedProductions.length})
+                    {stats.materialShortages > 0 && (
+                      <Badge variant="destructive" className="ml-2">
+                        {stats.materialShortages}
+                      </Badge>
+                    )}
+                  </TabsTrigger>
                   <TabsTrigger value="completed">생산 완료 ({completedProductions.length})</TabsTrigger>
                   <TabsTrigger value="inspected">검수 완료 ({inspectedProductions.length})</TabsTrigger>
-                  <TabsTrigger value="materials">자재 현황 ({materials.length})</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="planned" className="mt-6">
-                  <ProductionTable productions={plannedProductions} showActions />
+                  <div className="grid gap-4">
+                    {paginatedPlannedProductions.map((production) => {
+                      const order = orders.find((o) => o.id === production.orderId)
+                      if (!order) return null
+
+                      const cardClassName = production.materialShortage ? "border-2 border-red-500 bg-red-50" : ""
+
+                      return (
+                        <Card key={production.id} className={cardClassName}>
+                          <CardHeader>
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <CardTitle className="text-lg flex items-center gap-2">
+                                  {production.id} - {order.product}
+                                  {production.materialShortage && (
+                                    <Badge variant="destructive" className="ml-2">
+                                      자재부족
+                                    </Badge>
+                                  )}
+                                </CardTitle>
+                                <CardDescription>
+                                  {production.productionLine} | 주문번호: {order.id} | 고객: {order.customer}
+                                </CardDescription>
+                              </div>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedProduction(production.id)
+                                  setShowMrpDialog(true)
+                                }}
+                              >
+                                <Package className="w-4 h-4 mr-2" />
+                                자재 소요량 확인
+                              </Button>
+                            </div>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="flex flex-col gap-1">
+                              {production.status === "planned" && <Badge variant="secondary">계획중</Badge>}
+                              {production.status === "completed" && <Badge>생산완료</Badge>}
+                              {production.status === "inspected" && <Badge className="bg-green-600">검수완료</Badge>}
+                              {production.materialShortage && (
+                                <Badge variant="destructive" className="text-xs">
+                                  <AlertTriangle className="w-3 h-3 mr-1" />
+                                  자재부족
+                                </Badge>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
+                  </div>
+                  <Pagination currentPage={plannedPage} totalPages={plannedTotalPages} onPageChange={setPlannedPage} />
                 </TabsContent>
 
                 <TabsContent value="completed" className="mt-6">
-                  <ProductionTable productions={completedProductions} showActions={false} />
+                  <div className="grid gap-4">
+                    {paginatedCompletedProductions.map((production) => {
+                      return (
+                        <Card key={production.id}>
+                          <CardHeader>
+                            <CardTitle>{production.id}</CardTitle>
+                            <CardDescription>
+                              {production.productionLine} | 주문번호: {production.orderId} | 고객:{" "}
+                              {production.order?.customer || "-"}
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <p>품목: {production.order?.product || "-"}</p>
+                            <p>계획수량: {production.plannedQuantity.toLocaleString()}</p>
+                            <p>검수수량: {production.inspectedQuantity.toLocaleString()}</p>
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
+                  </div>
+                  <Pagination
+                    currentPage={completedPage}
+                    totalPages={completedTotalPages}
+                    onPageChange={setCompletedPage}
+                  />
                 </TabsContent>
 
                 <TabsContent value="inspected" className="mt-6">
-                  <ProductionTable productions={inspectedProductions} showActions={false} />
-                </TabsContent>
-
-                <TabsContent value="materials" className="mt-6">
-                  <div className="border rounded-lg">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>자재코드</TableHead>
-                          <TableHead>자재명</TableHead>
-                          <TableHead>카테고리</TableHead>
-                          <TableHead>공급업체</TableHead>
-                          <TableHead>현재재고</TableHead>
-                          <TableHead>최소재고</TableHead>
-                          <TableHead>단가</TableHead>
-                          <TableHead>리드타임</TableHead>
-                          <TableHead>상태</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {materials.map((material) => {
-                          const isInsufficient = material.currentStock < material.minStock
-                          return (
-                            <TableRow key={material.id}>
-                              <TableCell className="font-medium">{material.code}</TableCell>
-                              <TableCell>{material.name}</TableCell>
-                              <TableCell>{material.category}</TableCell>
-                              <TableCell>{material.supplier}</TableCell>
-                              <TableCell className={isInsufficient ? "text-red-600 font-semibold" : ""}>
-                                {material.currentStock.toLocaleString()}
-                              </TableCell>
-                              <TableCell>{material.minStock.toLocaleString()}</TableCell>
-                              <TableCell>{material.unitPrice.toLocaleString()}원</TableCell>
-                              <TableCell>{material.leadTimeDays}일</TableCell>
-                              <TableCell>
-                                {isInsufficient ? (
-                                  <Badge variant="destructive">
-                                    <AlertTriangle className="w-3 h-3 mr-1" />
-                                    부족
-                                  </Badge>
-                                ) : (
-                                  <Badge className="bg-green-600">충분</Badge>
-                                )}
-                              </TableCell>
-                            </TableRow>
-                          )
-                        })}
-                      </TableBody>
-                    </Table>
+                  <div className="grid gap-4">
+                    {paginatedInspectedProductions.map((production) => {
+                      return (
+                        <Card key={production.id}>
+                          <CardHeader>
+                            <CardTitle>{production.id}</CardTitle>
+                            <CardDescription>
+                              {production.productionLine} | 주문번호: {production.orderId} | 고객:{" "}
+                              {production.order?.customer || "-"}
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <p>품목: {production.order?.product || "-"}</p>
+                            <p>계획수량: {production.plannedQuantity.toLocaleString()}</p>
+                            <p>검수수량: {production.inspectedQuantity.toLocaleString()}</p>
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
                   </div>
+                  <Pagination
+                    currentPage={inspectedPage}
+                    totalPages={inspectedTotalPages}
+                    onPageChange={setInspectedPage}
+                  />
                 </TabsContent>
               </Tabs>
             )}
           </CardContent>
         </Card>
       </div>
-
       <Toaster />
-    </div>
+    </LayoutWrapper>
   )
 }

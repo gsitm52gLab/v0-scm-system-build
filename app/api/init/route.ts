@@ -11,11 +11,14 @@ export async function GET() {
       stats: {
         orders: data.orders.length,
         productions: data.productions.length,
+        materials: data.materials.length,
         inventory: data.inventory.length,
         dispatch: data.dispatch.length,
+        shipments: data.shipments.length,
       },
     })
   } catch (error) {
+    console.error("[v0] Database initialization error:", error)
     return NextResponse.json({ success: false, error: "Failed to initialize database" }, { status: 500 })
   }
 }

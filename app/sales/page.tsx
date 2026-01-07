@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Navigation } from "@/components/navigation"
+import { LayoutWrapper } from "@/components/layout-wrapper"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -18,6 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Pagination } from "@/components/pagination"
 
 export default function SalesPage() {
   const [orders, setOrders] = useState<Order[]>([])
@@ -25,6 +26,9 @@ export default function SalesPage() {
   const [loading, setLoading] = useState(true)
   const [showApprovalDialog, setShowApprovalDialog] = useState(false)
   const { toast } = useToast()
+
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
 
   useEffect(() => {
     fetchOrders()
@@ -142,11 +146,12 @@ export default function SalesPage() {
     samsung: orders.filter((o) => o.customer === "삼성SDI").reduce((sum, o) => sum + o.confirmedQuantity, 0),
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
+  const totalPages = Math.ceil(orders.length / itemsPerPage)
+  const paginatedOrders = orders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
-      <div className="container mx-auto px-4 py-8">
+  return (
+    <LayoutWrapper>
+      <div className="container mx-auto px-6 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground">판매 계획</h1>
           <p className="text-muted-foreground mt-1">
@@ -180,7 +185,7 @@ export default function SalesPage() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                {((stats.hyundai / stats.totalQuantity) * 100).toFixed(1)}% 점유율
+                {stats.totalQuantity > 0 ? ((stats.hyundai / stats.totalQuantity) * 100).toFixed(1) : 0}% 점유율
               </p>
             </CardContent>
           </Card>
@@ -191,7 +196,7 @@ export default function SalesPage() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                {((stats.samsung / stats.totalQuantity) * 100).toFixed(1)}% 점유율
+                {stats.totalQuantity > 0 ? ((stats.samsung / stats.totalQuantity) * 100).toFixed(1) : 0}% 점유율
               </p>
             </CardContent>
           </Card>
@@ -224,58 +229,61 @@ export default function SalesPage() {
             ) : orders.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">승인 대기 중인 발주가 없습니다.</div>
             ) : (
-              <div className="border rounded-lg">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-12">
-                        <input
-                          type="checkbox"
-                          checked={selectedOrders.length === orders.length && orders.length > 0}
-                          onChange={handleSelectAll}
-                          className="rounded border-input"
-                        />
-                      </TableHead>
-                      <TableHead>주문번호</TableHead>
-                      <TableHead>발주월</TableHead>
-                      <TableHead>발주사</TableHead>
-                      <TableHead>품목</TableHead>
-                      <TableHead>확정수량</TableHead>
-                      <TableHead>배정 공장</TableHead>
-                      <TableHead>상태</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {orders.map((order) => {
-                      const productionLine = order.product === "EV" ? "광주1공장" : "광주2공장"
+              <>
+                <div className="border rounded-lg">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-12">
+                          <input
+                            type="checkbox"
+                            checked={selectedOrders.length === orders.length && orders.length > 0}
+                            onChange={handleSelectAll}
+                            className="rounded border-input"
+                          />
+                        </TableHead>
+                        <TableHead>주문번호</TableHead>
+                        <TableHead>발주월</TableHead>
+                        <TableHead>발주사</TableHead>
+                        <TableHead>품목</TableHead>
+                        <TableHead>확정수량</TableHead>
+                        <TableHead>배정 공장</TableHead>
+                        <TableHead>상태</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {paginatedOrders.map((order) => {
+                        const productionLine = order.category === "EV" ? "광주1공장" : "광주2공장"
 
-                      return (
-                        <TableRow key={order.id}>
-                          <TableCell>
-                            <input
-                              type="checkbox"
-                              checked={selectedOrders.includes(order.id)}
-                              onChange={() => handleSelectOrder(order.id)}
-                              className="rounded border-input"
-                            />
-                          </TableCell>
-                          <TableCell className="font-medium">{order.id}</TableCell>
-                          <TableCell>{order.orderDate}</TableCell>
-                          <TableCell>{order.customer}</TableCell>
-                          <TableCell>{order.product}</TableCell>
-                          <TableCell className="font-semibold">{order.confirmedQuantity.toLocaleString()}</TableCell>
-                          <TableCell>
-                            <Badge variant="outline">{productionLine}</Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="secondary">확정</Badge>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
+                        return (
+                          <TableRow key={order.id}>
+                            <TableCell>
+                              <input
+                                type="checkbox"
+                                checked={selectedOrders.includes(order.id)}
+                                onChange={() => handleSelectOrder(order.id)}
+                                className="rounded border-input"
+                              />
+                            </TableCell>
+                            <TableCell className="font-medium">{order.id}</TableCell>
+                            <TableCell>{order.orderDate}</TableCell>
+                            <TableCell>{order.customer}</TableCell>
+                            <TableCell>{order.product}</TableCell>
+                            <TableCell className="font-semibold">{order.confirmedQuantity.toLocaleString()}</TableCell>
+                            <TableCell>
+                              <Badge variant="outline">{productionLine}</Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="secondary">확정</Badge>
+                            </TableCell>
+                          </TableRow>
+                        )
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+              </>
             )}
           </CardContent>
         </Card>
@@ -325,6 +333,6 @@ export default function SalesPage() {
       </Dialog>
 
       <Toaster />
-    </div>
+    </LayoutWrapper>
   )
 }
