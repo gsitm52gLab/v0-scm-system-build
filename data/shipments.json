@@ -1,0 +1,4106 @@
+[
+  {
+    "id": "SHP-2024-01-현대차-EV-100",
+    "shipmentNumber": "SHP-202401-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-01-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1623
+      }
+    ],
+    "totalAmount": 3244901729.323308,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-01-현대차-EV-100K",
+    "shipmentNumber": "SHP-202401-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-01-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1187
+      }
+    ],
+    "totalAmount": 2373964397.1205754,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-01-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-01-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202401-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-01-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1257
+      }
+    ],
+    "totalAmount": 2513962195.488722,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-01-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202401-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-01-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 1273
+      }
+    ],
+    "totalAmount": 2546583498.854087,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-01-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-01-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202401-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-01-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 470
+      }
+    ],
+    "totalAmount": 940134738.6172006,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-01-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202401-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-01-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 562
+      }
+    ],
+    "totalAmount": 1123427679.4657762,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-01-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-01-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202401-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-01-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 595
+      }
+    ],
+    "totalAmount": 1189201472.99509,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-01-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202401-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-01-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 507
+      }
+    ],
+    "totalAmount": 1014547685.1851853,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-01-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-02-현대차-EV-100",
+    "shipmentNumber": "SHP-202402-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-02-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 674
+      }
+    ],
+    "totalAmount": 1348454217.3913045,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-02-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-02-현대차-EV-100K",
+    "shipmentNumber": "SHP-202402-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-02-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 679
+      }
+    ],
+    "totalAmount": 1357651170.8482676,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-02-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-02-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202402-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-02-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 537
+      }
+    ],
+    "totalAmount": 1073322159.8877981,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-02-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-02-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202402-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-02-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 634
+      }
+    ],
+    "totalAmount": 1267260981.595092,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-02-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-02-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202402-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-02-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 237
+      }
+    ],
+    "totalAmount": 474085921.4501511,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-02-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-02-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202402-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-02-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 297
+      }
+    ],
+    "totalAmount": 593599141.1042944,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-02-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-02-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202402-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-02-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 289
+      }
+    ],
+    "totalAmount": 578403447.2934473,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-02-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-02-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202402-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-02-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 244
+      }
+    ],
+    "totalAmount": 488282898.5507246,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-02-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-03-현대차-EV-100",
+    "shipmentNumber": "SHP-202403-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-03-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1154
+      }
+    ],
+    "totalAmount": 2307528979.591837,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-03-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-03-현대차-EV-100K",
+    "shipmentNumber": "SHP-202403-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-03-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 875
+      }
+    ],
+    "totalAmount": 1749763313.6094675,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-03-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-03-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202403-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-03-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 841
+      }
+    ],
+    "totalAmount": 1680967041.9651997,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-03-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-03-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202403-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-03-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 786
+      }
+    ],
+    "totalAmount": 1571486076.923077,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-03-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-03-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202403-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-03-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 396
+      }
+    ],
+    "totalAmount": 791513421.5500945,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-03-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-03-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202403-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-03-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 371
+      }
+    ],
+    "totalAmount": 741258000,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-03-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-03-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202403-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-03-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 344
+      }
+    ],
+    "totalAmount": 687585995.6236323,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-03-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-03-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202403-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-03-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 377
+      }
+    ],
+    "totalAmount": 753475347.9125247,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-03-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-04-현대차-EV-100",
+    "shipmentNumber": "SHP-202404-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-04-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 878
+      }
+    ],
+    "totalAmount": 1756407443.1301181,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-04-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-04-현대차-EV-100K",
+    "shipmentNumber": "SHP-202404-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-04-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 985
+      }
+    ],
+    "totalAmount": 1970581549.8154984,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-04-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-04-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202404-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-04-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 787
+      }
+    ],
+    "totalAmount": 1573321551.724138,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-04-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-04-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202404-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-04-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 747
+      }
+    ],
+    "totalAmount": 1493753549.4880548,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-04-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-04-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202404-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-04-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 385
+      }
+    ],
+    "totalAmount": 769028828.8288288,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-04-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-04-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202404-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-04-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 315
+      }
+    ],
+    "totalAmount": 629888916.8765743,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-04-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-04-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202404-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-04-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 377
+      }
+    ],
+    "totalAmount": 754576480.5825244,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-04-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-04-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202404-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-04-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 294
+      }
+    ],
+    "totalAmount": 587927227.7227722,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-04-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-05-현대차-EV-100",
+    "shipmentNumber": "SHP-202405-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-05-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 2273
+      }
+    ],
+    "totalAmount": 4546552817.186867,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-05-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-05-현대차-EV-100K",
+    "shipmentNumber": "SHP-202405-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-05-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1704
+      }
+    ],
+    "totalAmount": 3408613264.781491,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-05-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-05-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202405-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-05-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1767
+      }
+    ],
+    "totalAmount": 3533376671.779141,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-05-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-05-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202405-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-05-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 1681
+      }
+    ],
+    "totalAmount": 3362395529.4117646,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-05-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-05-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202405-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-05-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 874
+      }
+    ],
+    "totalAmount": 1748064946.921444,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-05-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-05-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202405-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-05-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 837
+      }
+    ],
+    "totalAmount": 1673389422.4924011,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-05-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-05-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202405-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-05-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 880
+      }
+    ],
+    "totalAmount": 1759746695.095949,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-05-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-05-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202405-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-05-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 799
+      }
+    ],
+    "totalAmount": 1598102986.0365198,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-05-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-06-현대차-EV-100",
+    "shipmentNumber": "SHP-202406-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-06-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 746
+      }
+    ],
+    "totalAmount": 1492337020.7570207,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-06-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-06-현대차-EV-100K",
+    "shipmentNumber": "SHP-202406-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-06-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 622
+      }
+    ],
+    "totalAmount": 1244482586.2068965,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-06-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-06-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202406-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-06-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 517
+      }
+    ],
+    "totalAmount": 1033950478.927203,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-06-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-06-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202406-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-06-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 442
+      }
+    ],
+    "totalAmount": 883216604.477612,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-06-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-06-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202406-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-06-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 264
+      }
+    ],
+    "totalAmount": 527660198.019802,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-06-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-06-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202406-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-06-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 268
+      }
+    ],
+    "totalAmount": 536009436.6197183,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-06-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-06-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202406-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-06-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 279
+      }
+    ],
+    "totalAmount": 558656470.5882353,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-06-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-06-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202406-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-06-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 293
+      }
+    ],
+    "totalAmount": 585415979.7297298,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-06-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-07-현대차-EV-100",
+    "shipmentNumber": "SHP-202407-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-07-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1758
+      }
+    ],
+    "totalAmount": 3516184682.3411703,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-07-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-07-현대차-EV-100K",
+    "shipmentNumber": "SHP-202407-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-07-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1700
+      }
+    ],
+    "totalAmount": 3399774144.0981092,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-07-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-07-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202407-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-07-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1328
+      }
+    ],
+    "totalAmount": 2655005392.450569,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-07-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-07-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202407-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-07-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 1093
+      }
+    ],
+    "totalAmount": 2185510059.32762,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-07-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-07-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202407-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-07-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 702
+      }
+    ],
+    "totalAmount": 1403557453.646477,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-07-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-07-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202407-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-07-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 799
+      }
+    ],
+    "totalAmount": 1596975641.025641,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-07-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-07-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202407-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-07-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 685
+      }
+    ],
+    "totalAmount": 1369200678.4260519,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-07-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-07-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202407-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-07-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 707
+      }
+    ],
+    "totalAmount": 1413660713.359274,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-07-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-08-현대차-EV-100",
+    "shipmentNumber": "SHP-202408-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-08-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1613
+      }
+    ],
+    "totalAmount": 3227025554.9358616,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-08-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-08-현대차-EV-100K",
+    "shipmentNumber": "SHP-202408-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-08-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1751
+      }
+    ],
+    "totalAmount": 3502240242.7440634,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-08-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-08-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202408-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-08-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1304
+      }
+    ],
+    "totalAmount": 2607643335.5570383,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-08-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-08-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202408-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-08-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 1164
+      }
+    ],
+    "totalAmount": 2328859162.5266147,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-08-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-08-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202408-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-08-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 586
+      }
+    ],
+    "totalAmount": 1172286290.076336,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-08-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-08-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202408-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-08-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 645
+      }
+    ],
+    "totalAmount": 1290299775.112444,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-08-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-08-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202408-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-08-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 600
+      }
+    ],
+    "totalAmount": 1200445582.5864277,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-08-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-08-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202408-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-08-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 703
+      }
+    ],
+    "totalAmount": 1406909541.7789757,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-08-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-09-현대차-EV-100",
+    "shipmentNumber": "SHP-202409-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-09-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 929
+      }
+    ],
+    "totalAmount": 1857748415.245737,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-09-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-09-현대차-EV-100K",
+    "shipmentNumber": "SHP-202409-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-09-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 793
+      }
+    ],
+    "totalAmount": 1586068296.6507177,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-09-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-09-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202409-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-09-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 684
+      }
+    ],
+    "totalAmount": 1367578932.9685361,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-09-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-09-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202409-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-09-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 562
+      }
+    ],
+    "totalAmount": 1123910793.6507936,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-09-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-09-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202409-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-09-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 427
+      }
+    ],
+    "totalAmount": 853900697.6744186,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-09-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-09-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202409-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-09-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 301
+      }
+    ],
+    "totalAmount": 602651039.3258427,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-09-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-09-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202409-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-09-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 396
+      }
+    ],
+    "totalAmount": 792477931.0344827,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-09-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-09-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202409-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-09-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 308
+      }
+    ],
+    "totalAmount": 616286511.627907,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-09-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-10-현대차-EV-100",
+    "shipmentNumber": "SHP-202410-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-10-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1682
+      }
+    ],
+    "totalAmount": 3364754692.124105,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-10-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-10-현대차-EV-100K",
+    "shipmentNumber": "SHP-202410-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-10-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1667
+      }
+    ],
+    "totalAmount": 3334046391.465677,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-10-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-10-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202410-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-10-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1265
+      }
+    ],
+    "totalAmount": 2529203967.168263,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-10-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-10-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202410-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-10-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 1503
+      }
+    ],
+    "totalAmount": 3005129244.332494,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-10-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-10-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202410-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-10-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 651
+      }
+    ],
+    "totalAmount": 1301715720.5240176,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-10-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-10-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202410-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-10-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 569
+      }
+    ],
+    "totalAmount": 1138021940.874036,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-10-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-10-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202410-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-10-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 683
+      }
+    ],
+    "totalAmount": 1366068008.5348506,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-10-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-10-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202410-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-10-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 593
+      }
+    ],
+    "totalAmount": 1185956139.0532544,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-10-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-11-현대차-EV-100",
+    "shipmentNumber": "SHP-202411-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-11-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1665
+      }
+    ],
+    "totalAmount": 3329893269.230769,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-11-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-11-현대차-EV-100K",
+    "shipmentNumber": "SHP-202411-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-11-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1934
+      }
+    ],
+    "totalAmount": 3869043236.5145226,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-11-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-11-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202411-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-11-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1595
+      }
+    ],
+    "totalAmount": 3189854115.8536587,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-11-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-11-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202411-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-11-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 1549
+      }
+    ],
+    "totalAmount": 3097774083.7032337,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-11-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-11-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202411-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-11-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 833
+      }
+    ],
+    "totalAmount": 1666566599.045346,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-11-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-11-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202411-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-11-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 646
+      }
+    ],
+    "totalAmount": 1291871994.715984,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-11-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-11-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202411-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-11-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 607
+      }
+    ],
+    "totalAmount": 1213545122.8501227,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-11-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-11-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202411-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-11-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 577
+      }
+    ],
+    "totalAmount": 1154388218.9973617,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-11-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-12-현대차-EV-100",
+    "shipmentNumber": "SHP-202412-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-12-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 567
+      }
+    ],
+    "totalAmount": 1135191417.721519,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-12-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-12-현대차-EV-100K",
+    "shipmentNumber": "SHP-202412-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2024-12-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 548
+      }
+    ],
+    "totalAmount": 1096268696.7741938,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-12-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-12-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202412-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-12-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 412
+      }
+    ],
+    "totalAmount": 824999038.0761523,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-12-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-12-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202412-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2024-12-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 474
+      }
+    ],
+    "totalAmount": 948712319.109462,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-12-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-12-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202412-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-12-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 276
+      }
+    ],
+    "totalAmount": 552206263.3451957,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-12-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-12-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202412-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-12-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 188
+      }
+    ],
+    "totalAmount": 376789915.96638656,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-12-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-12-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202412-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-12-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 256
+      }
+    ],
+    "totalAmount": 511757837.8378379,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-12-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2024-12-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202412-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2024-12-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 278
+      }
+    ],
+    "totalAmount": 556556000,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2024-12-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-01-현대차-EV-100",
+    "shipmentNumber": "SHP-202501-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-01-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 2179
+      }
+    ],
+    "totalAmount": 4357332959.183673,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-01-현대차-EV-100K",
+    "shipmentNumber": "SHP-202501-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-01-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 2143
+      }
+    ],
+    "totalAmount": 4286092403.880705,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-01-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-01-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202501-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-01-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1771
+      }
+    ],
+    "totalAmount": 3541970285.2348995,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-01-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202501-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-01-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 1560
+      }
+    ],
+    "totalAmount": 3119163053.0973454,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-01-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-01-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202501-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-01-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 730
+      }
+    ],
+    "totalAmount": 1460133728.448276,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-01-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202501-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-01-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 982
+      }
+    ],
+    "totalAmount": 1963504411.2149532,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-01-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-01-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202501-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-01-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 776
+      }
+    ],
+    "totalAmount": 1551526737.657309,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-01-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202501-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-01-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 828
+      }
+    ],
+    "totalAmount": 1655275151.5151513,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-01-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-02-현대차-EV-100",
+    "shipmentNumber": "SHP-202502-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-02-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1215
+      }
+    ],
+    "totalAmount": 2429552106.4950266,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-02-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-02-현대차-EV-100K",
+    "shipmentNumber": "SHP-202502-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-02-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1278
+      }
+    ],
+    "totalAmount": 2556435095.210617,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-02-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-02-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202502-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-02-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1034
+      }
+    ],
+    "totalAmount": 2068473760.0000002,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-02-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-02-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202502-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-02-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 1079
+      }
+    ],
+    "totalAmount": 2158328125.884017,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-02-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-02-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202502-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-02-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 554
+      }
+    ],
+    "totalAmount": 1108617360.7038124,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-02-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-02-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202502-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-02-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 680
+      }
+    ],
+    "totalAmount": 1360123958.3333333,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-02-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-02-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202502-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-02-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 527
+      }
+    ],
+    "totalAmount": 1053323761.0619469,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-02-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-02-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202502-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-02-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 483
+      }
+    ],
+    "totalAmount": 965655000,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-02-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-03-현대차-EV-100",
+    "shipmentNumber": "SHP-202503-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-03-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1223
+      }
+    ],
+    "totalAmount": 2446482872.702519,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-03-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-03-현대차-EV-100K",
+    "shipmentNumber": "SHP-202503-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-03-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1192
+      }
+    ],
+    "totalAmount": 2383422498.107495,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-03-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-03-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202503-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-03-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 959
+      }
+    ],
+    "totalAmount": 1917698786.0780983,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-03-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-03-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202503-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-03-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 908
+      }
+    ],
+    "totalAmount": 1815379363.29588,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-03-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-03-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202503-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-03-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 464
+      }
+    ],
+    "totalAmount": 928508099.1735536,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-03-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-03-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202503-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-03-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 466
+      }
+    ],
+    "totalAmount": 931347757.1669477,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-03-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-03-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202503-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-03-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 425
+      }
+    ],
+    "totalAmount": 850706878.8501027,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-03-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-03-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202503-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-03-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 501
+      }
+    ],
+    "totalAmount": 1002329377.1626297,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-03-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-04-현대차-EV-100",
+    "shipmentNumber": "SHP-202504-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-04-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 2174
+      }
+    ],
+    "totalAmount": 4347718605.427976,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-04-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-04-현대차-EV-100K",
+    "shipmentNumber": "SHP-202504-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-04-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 2111
+      }
+    ],
+    "totalAmount": 4221113242.2512236,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-04-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-04-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202504-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-04-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1322
+      }
+    ],
+    "totalAmount": 2643249385.863268,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-04-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-04-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202504-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-04-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 1369
+      }
+    ],
+    "totalAmount": 2738254583.083383,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-04-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-04-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202504-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-04-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 587
+      }
+    ],
+    "totalAmount": 1174641910.4084322,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-04-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-04-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202504-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-04-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 647
+      }
+    ],
+    "totalAmount": 1294366527.093596,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-04-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-04-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202504-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-04-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 732
+      }
+    ],
+    "totalAmount": 1463307198.0074718,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-04-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-04-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202504-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-04-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 564
+      }
+    ],
+    "totalAmount": 1128042141.9676213,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-04-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-05-현대차-EV-100",
+    "shipmentNumber": "SHP-202505-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-05-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 956
+      }
+    ],
+    "totalAmount": 1912494853.7134283,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-05-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-05-현대차-EV-100K",
+    "shipmentNumber": "SHP-202505-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-05-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1042
+      }
+    ],
+    "totalAmount": 2083353120.8053691,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-05-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-05-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202505-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-05-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 760
+      }
+    ],
+    "totalAmount": 1519678152.0692976,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-05-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-05-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202505-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-05-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 862
+      }
+    ],
+    "totalAmount": 1724726987.9518075,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-05-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-05-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202505-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-05-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 484
+      }
+    ],
+    "totalAmount": 967562485.8757062,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-05-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-05-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202505-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-05-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 445
+      }
+    ],
+    "totalAmount": 889937948.2071714,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-05-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-05-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202505-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-05-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 490
+      }
+    ],
+    "totalAmount": 980644736.8421052,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-05-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-05-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202505-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-05-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 341
+      }
+    ],
+    "totalAmount": 682358545.8612976,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-05-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-06-현대차-EV-100",
+    "shipmentNumber": "SHP-202506-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-06-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1227
+      }
+    ],
+    "totalAmount": 2453121829.025845,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-06-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-06-현대차-EV-100K",
+    "shipmentNumber": "SHP-202506-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-06-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1157
+      }
+    ],
+    "totalAmount": 2313350486.526946,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-06-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-06-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202506-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-06-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 889
+      }
+    ],
+    "totalAmount": 1777725507.9681275,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-06-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-06-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202506-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-06-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 741
+      }
+    ],
+    "totalAmount": 1482134985.6184084,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-06-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-06-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202506-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-06-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 577
+      }
+    ],
+    "totalAmount": 1153268195.1219513,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-06-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-06-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202506-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-06-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 554
+      }
+    ],
+    "totalAmount": 1108551047.9573712,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-06-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-06-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202506-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-06-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 493
+      }
+    ],
+    "totalAmount": 985426744.1860466,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-06-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-06-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202506-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-06-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 494
+      }
+    ],
+    "totalAmount": 987854420.4322201,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-06-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-07-현대차-EV-100",
+    "shipmentNumber": "SHP-202507-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-07-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1409
+      }
+    ],
+    "totalAmount": 2818327167.1826625,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-07-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-07-현대차-EV-100K",
+    "shipmentNumber": "SHP-202507-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-07-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1661
+      }
+    ],
+    "totalAmount": 3321839085.0376744,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-07-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-07-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202507-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-07-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 920
+      }
+    ],
+    "totalAmount": 1839715077.4246128,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-07-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-07-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202507-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-07-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 1295
+      }
+    ],
+    "totalAmount": 2590878269.896194,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-07-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-07-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202507-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-07-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 601
+      }
+    ],
+    "totalAmount": 1202694137.4269006,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-07-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-07-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202507-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-07-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 571
+      }
+    ],
+    "totalAmount": 1141692907.5630252,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-07-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-07-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202507-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-07-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 616
+      }
+    ],
+    "totalAmount": 1232380470.5882354,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-07-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-07-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202507-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-07-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 487
+      }
+    ],
+    "totalAmount": 973631060.6060606,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-07-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-08-현대차-EV-100",
+    "shipmentNumber": "SHP-202508-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-08-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1431
+      }
+    ],
+    "totalAmount": 2861257668.7500005,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-08-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-08-현대차-EV-100K",
+    "shipmentNumber": "SHP-202508-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-08-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1596
+      }
+    ],
+    "totalAmount": 3192495960.2237415,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-08-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-08-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202508-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-08-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 971
+      }
+    ],
+    "totalAmount": 1941488475.0462105,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-08-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-08-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202508-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-08-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 971
+      }
+    ],
+    "totalAmount": 1941482800.6872852,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-08-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-08-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202508-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-08-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 508
+      }
+    ],
+    "totalAmount": 1016046777.1639042,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-08-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-08-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202508-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-08-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 474
+      }
+    ],
+    "totalAmount": 947922717.3913044,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-08-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-08-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202508-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-08-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 544
+      }
+    ],
+    "totalAmount": 1088076217.162872,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-08-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-08-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202508-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-08-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 472
+      }
+    ],
+    "totalAmount": 944058066.7838314,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-08-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-09-현대차-EV-100",
+    "shipmentNumber": "SHP-202509-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-09-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 2253
+      }
+    ],
+    "totalAmount": 4506752166.149069,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-09-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-09-현대차-EV-100K",
+    "shipmentNumber": "SHP-202509-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-09-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 2427
+      }
+    ],
+    "totalAmount": 4855366920.047263,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-09-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-09-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202509-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-09-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1863
+      }
+    ],
+    "totalAmount": 3726536780.9239936,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-09-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-09-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202509-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-09-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 1711
+      }
+    ],
+    "totalAmount": 3422211116.0964665,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-09-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-09-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202509-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-09-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 638
+      }
+    ],
+    "totalAmount": 1275845822.78481,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-09-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-09-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202509-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-09-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 866
+      }
+    ],
+    "totalAmount": 1731772344.900105,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-09-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-09-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202509-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-09-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 1027
+      }
+    ],
+    "totalAmount": 2054803739.1304348,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-09-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-09-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202509-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-09-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 794
+      }
+    ],
+    "totalAmount": 1587655167.0378618,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-09-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-10-현대차-EV-100",
+    "shipmentNumber": "SHP-202510-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-10-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1300
+      }
+    ],
+    "totalAmount": 2600760096.4436407,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-10-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-10-현대차-EV-100K",
+    "shipmentNumber": "SHP-202510-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-10-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1785
+      }
+    ],
+    "totalAmount": 3570197289.473684,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-10-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-10-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202510-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-10-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1063
+      }
+    ],
+    "totalAmount": 2125720473.3283246,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-10-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-10-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202510-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-10-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 1145
+      }
+    ],
+    "totalAmount": 2290667564.575646,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-10-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-10-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202510-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-10-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 543
+      }
+    ],
+    "totalAmount": 1086542214.1823444,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-10-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-10-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202510-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-10-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 621
+      }
+    ],
+    "totalAmount": 1241676661.5620215,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-10-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-10-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202510-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-10-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 680
+      }
+    ],
+    "totalAmount": 1360895977.8085992,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-10-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-10-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202510-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-10-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 489
+      }
+    ],
+    "totalAmount": 977795367.965368,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-10-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-11-현대차-EV-100",
+    "shipmentNumber": "SHP-202511-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-11-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 856
+      }
+    ],
+    "totalAmount": 1711274438.095238,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-11-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-11-현대차-EV-100K",
+    "shipmentNumber": "SHP-202511-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-11-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 868
+      }
+    ],
+    "totalAmount": 1735894681.496461,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-11-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-11-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202511-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-11-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 853
+      }
+    ],
+    "totalAmount": 1705488986.1751153,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-11-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-11-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202511-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-11-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 650
+      }
+    ],
+    "totalAmount": 1299369897.9591837,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-11-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-11-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202511-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-11-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 263
+      }
+    ],
+    "totalAmount": 526393070.65217394,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-11-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-11-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202511-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-11-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 359
+      }
+    ],
+    "totalAmount": 718476127.320955,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-11-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-11-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202511-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-11-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 322
+      }
+    ],
+    "totalAmount": 643439341.1764705,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-11-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-11-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202511-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-11-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 331
+      }
+    ],
+    "totalAmount": 661433342.3913044,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-11-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-12-현대차-EV-100",
+    "shipmentNumber": "SHP-202512-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-12-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1690
+      }
+    ],
+    "totalAmount": 3379955897.703549,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-12-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-12-현대차-EV-100K",
+    "shipmentNumber": "SHP-202512-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2025-12-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1498
+      }
+    ],
+    "totalAmount": 2996172019.138756,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-12-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-12-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202512-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-12-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1577
+      }
+    ],
+    "totalAmount": 3153055517.2413793,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-12-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-12-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202512-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2025-12-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 1242
+      }
+    ],
+    "totalAmount": 2483555294.117647,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-12-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-12-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202512-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-12-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 738
+      }
+    ],
+    "totalAmount": 1476181397.1539457,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-12-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-12-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202512-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-12-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 620
+      }
+    ],
+    "totalAmount": 1239035732.647815,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-12-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-12-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202512-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-12-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 604
+      }
+    ],
+    "totalAmount": 1208088714.8102813,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-12-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2025-12-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202512-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2025-12-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 581
+      }
+    ],
+    "totalAmount": 1161655471.6981132,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2025-12-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-01-현대차-EV-100",
+    "shipmentNumber": "SHP-202601-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2026-01-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1619
+      }
+    ],
+    "totalAmount": 3238683182.417582,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-01-현대차-EV-100K",
+    "shipmentNumber": "SHP-202601-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2026-01-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1963
+      }
+    ],
+    "totalAmount": 3926824232.625482,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-01-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-01-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202601-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2026-01-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1116
+      }
+    ],
+    "totalAmount": 2231640236.8421054,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-01-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202601-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2026-01-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 1275
+      }
+    ],
+    "totalAmount": 2549464048.672566,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-01-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-01-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202601-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2026-01-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 692
+      }
+    ],
+    "totalAmount": 1383335496.6887414,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-01-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202601-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2026-01-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 588
+      }
+    ],
+    "totalAmount": 1176727343.75,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-01-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-01-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202601-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2026-01-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 839
+      }
+    ],
+    "totalAmount": 1677276894.9232585,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-01-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202601-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2026-01-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 627
+      }
+    ],
+    "totalAmount": 1254230797.5460124,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-01-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-02-현대차-EV-100",
+    "shipmentNumber": "SHP-202602-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2026-02-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1608
+      }
+    ],
+    "totalAmount": 3217073007.518797,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-02-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-02-현대차-EV-100K",
+    "shipmentNumber": "SHP-202602-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2026-02-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1511
+      }
+    ],
+    "totalAmount": 3022050116.0862355,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-02-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-02-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202602-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2026-02-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 1629
+      }
+    ],
+    "totalAmount": 3257950636.3636365,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-02-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-02-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202602-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2026-02-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 1065
+      }
+    ],
+    "totalAmount": 2130416390.9774437,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-02-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-02-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202602-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2026-02-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 750
+      }
+    ],
+    "totalAmount": 1501047794.117647,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-02-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-02-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202602-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2026-02-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 622
+      }
+    ],
+    "totalAmount": 1244991098.901099,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-02-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-02-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202602-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2026-02-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 688
+      }
+    ],
+    "totalAmount": 1376390606.451613,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-02-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-02-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202602-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2026-02-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 742
+      }
+    ],
+    "totalAmount": 1483429230.7692308,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-02-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-03-현대차-EV-100",
+    "shipmentNumber": "SHP-202603-001",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2026-03-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 2137
+      }
+    ],
+    "totalAmount": 4274487263.8436475,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-03-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-03-현대차-EV-100K",
+    "shipmentNumber": "SHP-202603-002",
+    "customer": "현대차",
+    "destination": "미정",
+    "shipmentDate": "2026-03-17",
+    "products": [
+      {
+        "productCode": "EV-100K",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 2376
+      }
+    ],
+    "totalAmount": 4751634349.030471,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-03-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-03-삼성SDI-EV-100",
+    "shipmentNumber": "SHP-202603-011",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2026-03-15",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 2184
+      }
+    ],
+    "totalAmount": 4368889810.407422,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-03-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-03-삼성SDI-SV-200",
+    "shipmentNumber": "SHP-202603-012",
+    "customer": "삼성SDI",
+    "destination": "미정",
+    "shipmentDate": "2026-03-17",
+    "products": [
+      {
+        "productCode": "SV-200",
+        "product": "SV Battery Pack",
+        "category": "SV",
+        "quantity": 1758
+      }
+    ],
+    "totalAmount": 3516377460.02741,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-03-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-03-일본거래처-ESS-001",
+    "shipmentNumber": "SHP-202603-021",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2026-03-15",
+    "products": [
+      {
+        "productCode": "ESS-001",
+        "product": "ESS Module A",
+        "category": "ESS",
+        "quantity": 839
+      }
+    ],
+    "totalAmount": 1677871033.3048677,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-03-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-03-일본거래처-ESS-002",
+    "shipmentNumber": "SHP-202603-022",
+    "customer": "일본거래처",
+    "destination": "미정",
+    "shipmentDate": "2026-03-17",
+    "products": [
+      {
+        "productCode": "ESS-002",
+        "product": "ESS Module B",
+        "category": "ESS",
+        "quantity": 1110
+      }
+    ],
+    "totalAmount": 2220796608.8328075,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-03-17T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-03-유럽거래처-PLBM-300",
+    "shipmentNumber": "SHP-202603-031",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2026-03-15",
+    "products": [
+      {
+        "productCode": "PLBM-300",
+        "product": "PLBM Battery",
+        "category": "PLBM",
+        "quantity": 929
+      }
+    ],
+    "totalAmount": 1858274799.618321,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-03-15T00:00:00.000Z"
+  },
+  {
+    "id": "SHP-2026-03-유럽거래처-EV-100",
+    "shipmentNumber": "SHP-202603-032",
+    "customer": "유럽거래처",
+    "destination": "미정",
+    "shipmentDate": "2026-03-17",
+    "products": [
+      {
+        "productCode": "EV-100",
+        "product": "EV Battery Module",
+        "category": "EV",
+        "quantity": 798
+      }
+    ],
+    "totalAmount": 1596640729.9270074,
+    "status": "registered",
+    "dispatchIds": [],
+    "createdAt": "2026-03-17T00:00:00.000Z"
+  }
+]
