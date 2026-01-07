@@ -1,4 +1,6 @@
 // Database schema and initialization for Sebang SCM system
+import * as fs from "fs"
+import * as path from "path"
 
 export type ProductCategory = "ESS" | "EV" | "SV" | "PLBM"
 
@@ -113,6 +115,7 @@ export interface BusinessPlan {
   year: number
   totalTarget: number // 연간 목표 수량
   totalRevenue: number // 연간 목표 매출 (만원)
+  monthlyTargets?: { month: number; target: number; revenue: number }[] // 월별 목표
   createdAt: string
   updatedAt: string
 }
@@ -149,6 +152,8 @@ export interface SalesPlanHistory {
   newStatus?: string
   changedBy: string // 변경자 (사용자명)
   changeReason?: string // 변경 사유
+  changeRequestComment?: string // 변경 요청 의견
+  approvalComment?: string // 승인 의견
   createdAt: string
 }
 
@@ -166,6 +171,55 @@ export interface ShipmentPlanHistory {
   changeReason?: string
   createdAt: string
 }
+
+// Product portfolio data
+const productPortfolio = [
+  { code: "ESS-001", category: "ESS" as ProductCategory, name: "ESS Module A", destination: "일본", unitPrice: 150 },
+  { code: "ESS-002", category: "ESS" as ProductCategory, name: "ESS Module B", destination: "일본", unitPrice: 155 },
+  { code: "EV-100", category: "EV" as ProductCategory, name: "EV Battery Module", destination: "유럽", unitPrice: 200 },
+  {
+    code: "EV-100K",
+    category: "EV" as ProductCategory,
+    name: "EV Battery Module",
+    destination: "창원",
+    unitPrice: 200,
+  },
+  { code: "EV-200", category: "EV" as ProductCategory, name: "EV Pack Assembly", destination: "유럽", unitPrice: 250 },
+  { code: "SV-001", category: "SV" as ProductCategory, name: "Service Module A", destination: "울산", unitPrice: 120 },
+  { code: "SV-002", category: "SV" as ProductCategory, name: "Service Module B", destination: "경주", unitPrice: 115 },
+  {
+    code: "PLBM-A01",
+    category: "PLBM" as ProductCategory,
+    name: "PLBM Spec A1",
+    destination: "울산글로비스",
+    route: ["광주", "경주", "울산사외창고", "울산글로비스"],
+    unitPrice: 180,
+  },
+  {
+    code: "PLBM-A02",
+    category: "PLBM" as ProductCategory,
+    name: "PLBM Spec A2",
+    destination: "울산글로비스",
+    route: ["광주", "울산글로비스"],
+    unitPrice: 175,
+  },
+  {
+    code: "PLBM-B01",
+    category: "PLBM" as ProductCategory,
+    name: "PLBM Spec B1",
+    destination: "경주",
+    route: ["광주", "경주"],
+    unitPrice: 170,
+  },
+  {
+    code: "PLBM-B02",
+    category: "PLBM" as ProductCategory,
+    name: "PLBM Spec B2",
+    destination: "울산사외창고",
+    route: ["광주", "울산사외창고"],
+    unitPrice: 172,
+  },
+]
 
 // Generate sample data for 2024-01 to 2025-12
 function calculateLeadTime(category: ProductCategory): number {
@@ -522,89 +576,94 @@ export function generateSampleDispatch(inventory: Inventory[], orders: Order[]):
 }
 
 function generateSampleShipments(
-  inventoryData: Inventory[],
-  ordersData: Order[],
-  dispatchData: Dispatch[],
-  salesPlanData: SalesPlan[],
+  inventoryDataParam: Inventory[],
+  ordersDataParam: Order[],
+  dispatchDataParam: Dispatch[],
+  salesPlanDataParam: SalesPlan[],
 ): Shipment[] {
   const shipments: Shipment[] = []
   
   // 판매계획 데이터를 연월별로 그룹화
   const salesPlansByMonth: Record<string, SalesPlan[]> = {}
-  salesPlanData.forEach((plan) => {
+  salesPlanDataParam.forEach((plan) => {
     if (!salesPlansByMonth[plan.yearMonth]) {
       salesPlansByMonth[plan.yearMonth] = []
     }
     salesPlansByMonth[plan.yearMonth].push(plan)
   })
 
-  // 1월부터 3월까지 출하계획 생성
-  const targetYear = 2025
-  for (let month = 1; month <= 3; month++) {
-    const yearMonth = `${targetYear}-${String(month).padStart(2, "0")}`
-    const monthSalesPlans = salesPlansByMonth[yearMonth] || []
-    
-    // 해당 월의 판매계획을 업체별로 그룹화
-    const plansByCustomer: Record<string, SalesPlan[]> = {}
-    monthSalesPlans.forEach((plan) => {
-      if (!plansByCustomer[plan.customer]) {
-        plansByCustomer[plan.customer] = []
-      }
-      plansByCustomer[plan.customer].push(plan)
-    })
-
-    // 각 업체별로 출하계획 생성
-    Object.keys(plansByCustomer).forEach((customer, customerIndex) => {
-      const customerPlans = plansByCustomer[customer]
+  // 2024년부터 2026년까지 출하계획 생성
+  for (let targetYear = 2024; targetYear <= 2026; targetYear++) {
+    const maxMonth = targetYear === 2026 ? 3 : 12 // 2026년은 3월까지, 나머지는 12월까지
+    for (let month = 1; month <= maxMonth; month++) {
+      const yearMonth = `${targetYear}-${String(month).padStart(2, "0")}`
+      const monthSalesPlans = salesPlansByMonth[yearMonth] || []
       
-      customerPlans.forEach((plan, planIndex) => {
-        // 판매계획의 반 정도 수량으로 출하계획 생성
-        const shipmentQuantity = Math.floor(plan.plannedQuantity * 0.5)
-        if (shipmentQuantity <= 0) return
-
-        const unitPrice = plan.plannedRevenue / plan.plannedQuantity || 200
-        const shipmentDate = new Date(`${yearMonth}-${String(15 + planIndex * 2).padStart(2, "0")}`)
-        
-        // 배차 정보 찾기
-        const relatedOrder = ordersData.find(
-          (o) => o.customer === customer && o.product === plan.productCode && o.orderDate === yearMonth
-        )
-        
-        const assignedDispatches = dispatchData
-          .filter((d) => d.dispatchDate.startsWith(yearMonth))
-          .slice(customerIndex * 2, customerIndex * 2 + 1)
-
-        let shipmentStatus: Shipment["status"] = "registered"
-        if (assignedDispatches.length > 0) {
-          if (assignedDispatches.some((d) => d.status === "completed")) {
-            shipmentStatus = "completed"
-          } else if (assignedDispatches.some((d) => d.status === "dispatched")) {
-            shipmentStatus = "dispatched"
-          }
+      // 해당 월의 판매계획을 업체별로 그룹화
+      const plansByCustomer: Record<string, SalesPlan[]> = {}
+      monthSalesPlans.forEach((plan) => {
+        if (!plansByCustomer[plan.customer]) {
+          plansByCustomer[plan.customer] = []
         }
+        plansByCustomer[plan.customer].push(plan)
+      })
 
-        shipments.push({
-          id: `SHP-${yearMonth}-${customer}-${plan.productCode}`,
-          shipmentNumber: `SHP-${yearMonth.replace(/-/g, "")}-${String(customerIndex * 10 + planIndex + 1).padStart(3, "0")}`,
-          customer: customer,
-          destination: relatedOrder?.destination || "미정",
-          shipmentDate: shipmentDate.toISOString().split("T")[0],
-          products: [
-            {
-              productCode: plan.productCode,
-              product: plan.product,
-              category: plan.category,
-              quantity: shipmentQuantity,
-            },
-          ],
-          totalAmount: shipmentQuantity * unitPrice * 10000, // 만원 단위를 원 단위로 변환
-          status: shipmentStatus,
-          dispatchIds: assignedDispatches.map((d) => d.id),
-          dispatchInfo: assignedDispatches.length > 0 ? assignedDispatches : undefined,
-          createdAt: shipmentDate.toISOString(),
+      // 각 업체별로 출하계획 생성
+      Object.keys(plansByCustomer).forEach((customer, customerIndex) => {
+        const customerPlans = plansByCustomer[customer]
+        
+        customerPlans.forEach((plan, planIndex) => {
+          // 판매계획에서 random(0.7~1.0)로 출하계획 생성 (실적 향상)
+          const randRate = 0.7 + Math.random() * 0.3 // 0.7 ~ 1.0
+          const shipmentQuantity = Math.floor(plan.plannedQuantity * randRate)
+          if (shipmentQuantity <= 0) return
+
+          const unitPrice = plan.plannedRevenue / plan.plannedQuantity || 200
+          // 날짜 생성: 각 계획마다 다른 날짜로 분산 (15일, 17일, 19일 등)
+          const day = Math.min(15 + planIndex * 2, 28) // 최대 28일까지
+          const shipmentDateStr = `${yearMonth}-${String(day).padStart(2, "0")}`
+          
+          // 배차 정보 찾기
+          const relatedOrder = ordersDataParam.find(
+            (o) => o.customer === customer && o.product === plan.productCode && o.orderDate === yearMonth
+          )
+          
+          const assignedDispatches = dispatchDataParam
+            .filter((d) => d.dispatchDate.startsWith(yearMonth))
+            .slice(customerIndex * 2, customerIndex * 2 + 1)
+
+          let shipmentStatus: Shipment["status"] = "registered"
+          if (assignedDispatches.length > 0) {
+            if (assignedDispatches.some((d) => d.status === "completed")) {
+              shipmentStatus = "completed"
+            } else if (assignedDispatches.some((d) => d.status === "dispatched")) {
+              shipmentStatus = "dispatched"
+            }
+          }
+
+          shipments.push({
+            id: `SHP-${yearMonth}-${customer}-${plan.productCode}`,
+            shipmentNumber: `SHP-${yearMonth.replace(/-/g, "")}-${String(customerIndex * 10 + planIndex + 1).padStart(3, "0")}`,
+            customer: customer,
+            destination: relatedOrder?.destination || "미정",
+            shipmentDate: shipmentDateStr,
+            products: [
+              {
+                productCode: plan.productCode,
+                product: plan.product,
+                category: plan.category,
+                quantity: shipmentQuantity,
+              },
+            ],
+            totalAmount: shipmentQuantity * unitPrice * 10000, // 만원 단위를 원 단위로 변환
+            status: shipmentStatus,
+            dispatchIds: assignedDispatches.map((d) => d.id),
+            dispatchInfo: assignedDispatches.length > 0 ? assignedDispatches : undefined,
+            createdAt: shipmentDateStr + "T00:00:00.000Z",
+          })
         })
       })
-    })
+    }
   }
 
   return shipments
@@ -615,11 +674,62 @@ function generateSampleBusinessPlans(): BusinessPlan[] {
   const plans: BusinessPlan[] = []
   for (let year = 2024; year <= 2026; year++) {
     const baseTarget = year === 2024 ? 50000 : year === 2025 ? 60000 : 70000
+    const baseRevenue = baseTarget * 200 // 평균 단가 200만원 가정
+    
+    // 월별 목표를 불규칙하게 생성 (중구난방)
+    // 각 월에 랜덤한 변동을 주되, 전체 합은 baseTarget과 baseRevenue가 되도록 조정
+    const monthlyTargets: { month: number; target: number; revenue: number }[] = []
+    let totalTargetSum = 0
+    let totalRevenueSum = 0
+    
+    // 먼저 랜덤한 값들 생성
+    for (let i = 0; i < 12; i++) {
+      // 각 월마다 0.5 ~ 1.8 배의 변동폭
+      const variation = 0.5 + Math.random() * 1.3
+      const monthlyTarget = Math.round((baseTarget / 12) * variation)
+      const monthlyRevenue = Math.round((baseRevenue / 12) * variation)
+      
+      monthlyTargets.push({
+        month: i + 1,
+        target: monthlyTarget,
+        revenue: monthlyRevenue,
+      })
+      
+      totalTargetSum += monthlyTarget
+      totalRevenueSum += monthlyRevenue
+    }
+    
+    // 전체 합이 baseTarget과 baseRevenue가 되도록 비율 조정
+    const targetRatio = baseTarget / totalTargetSum
+    const revenueRatio = baseRevenue / totalRevenueSum
+    
+    monthlyTargets.forEach((mt) => {
+      mt.target = Math.round(mt.target * targetRatio)
+      mt.revenue = Math.round(mt.revenue * revenueRatio)
+    })
+    
+    // 최종 합계 재계산하여 보정
+    const finalTargetSum = monthlyTargets.reduce((sum, mt) => sum + mt.target, 0)
+    const finalRevenueSum = monthlyTargets.reduce((sum, mt) => sum + mt.revenue, 0)
+    const targetDiff = baseTarget - finalTargetSum
+    const revenueDiff = baseRevenue - finalRevenueSum
+    
+    // 차이를 랜덤한 월에 분배
+    if (targetDiff !== 0) {
+      const randomMonth = Math.floor(Math.random() * 12)
+      monthlyTargets[randomMonth].target += targetDiff
+    }
+    if (revenueDiff !== 0) {
+      const randomMonth = Math.floor(Math.random() * 12)
+      monthlyTargets[randomMonth].revenue += revenueDiff
+    }
+    
     plans.push({
       id: `BP-${year}`,
       year,
       totalTarget: baseTarget,
-      totalRevenue: baseTarget * 200, // 평균 단가 200만원 가정
+      totalRevenue: baseRevenue,
+      monthlyTargets,
       createdAt: `${year}-01-01`,
       updatedAt: `${year}-01-01`,
     })
@@ -628,7 +738,7 @@ function generateSampleBusinessPlans(): BusinessPlan[] {
 }
 
 // Generate sample sales plan data (업체별)
-function generateSampleSalesPlans(): SalesPlan[] {
+function generateSampleSalesPlans(businessPlans: BusinessPlan[]): SalesPlan[] {
   const plans: SalesPlan[] = []
   const customers: SalesPlan["customer"][] = ["현대차", "삼성SDI", "일본거래처", "유럽거래처"]
   
@@ -653,17 +763,31 @@ function generateSampleSalesPlans(): SalesPlan[] {
   }
 
   for (let year = 2024; year <= 2026; year++) {
+    const businessPlan = businessPlans.find((bp) => bp.year === year)
+    if (!businessPlan) continue
+
     for (let month = 1; month <= 12; month++) {
       const yearMonth = `${year}-${String(month).padStart(2, "0")}`
+      // 경영계획의 해당 월 목표 가져오기
+      const monthlyTarget = businessPlan.monthlyTargets?.find((mt) => mt.month === month)
+      const monthlyBusinessTarget = monthlyTarget?.target || Math.round(businessPlan.totalTarget / 12)
+      const monthlyBusinessRevenue = monthlyTarget?.revenue || Math.round(businessPlan.totalRevenue / 12)
+      
       customers.forEach((customer) => {
         const products = customerProducts[customer] || []
         products.forEach((product) => {
-          const baseQty = customer === "현대차" ? 500 : customer === "삼성SDI" ? 350 : customer === "일본거래처" ? 50 : 200
-          const variance = Math.floor(Math.random() * 100) - 50
-          const quantity = Math.max(0, baseQty + variance)
+          // 경영계획에서 random(0.8~1.0)로 판매계획 생성 (실적 향상)
+          const randRate = 0.8 + Math.random() * 0.2 // 0.8 ~ 1.0
+          const customerMultiplier = customer === "현대차" ? 0.4 : customer === "삼성SDI" ? 0.3 : customer === "일본거래처" ? 0.15 : 0.15
+          const baseQty = Math.round(monthlyBusinessTarget * customerMultiplier * randRate)
+          const quantity = Math.max(0, baseQty)
+          
           const unitPrice = product.category === "EV" ? 200 : product.category === "ESS" ? 150 : 180
-          // 과거 데이터는 승인, 현재/미래는 초안
-          const isPast = year < 2025 || (year === 2025 && month < 12)
+          const baseRevenue = Math.round(monthlyBusinessRevenue * customerMultiplier * randRate)
+          const revenue = Math.max(0, baseRevenue)
+          
+          // 2026년 3월 이전은 승인, 이후는 초안
+          const isPast = year < 2026 || (year === 2026 && month <= 3)
           plans.push({
             id: `SP-${yearMonth}-${customer}-${product.code}`,
             yearMonth,
@@ -672,7 +796,7 @@ function generateSampleSalesPlans(): SalesPlan[] {
             product: product.name,
             category: product.category,
             plannedQuantity: quantity,
-            plannedRevenue: quantity * unitPrice,
+            plannedRevenue: revenue || quantity * unitPrice, // revenue가 0이면 quantity * unitPrice 사용
             status: isPast ? "approved" : "draft",
             createdAt: `${yearMonth}-01`,
             updatedAt: `${yearMonth}-01`,
@@ -804,9 +928,34 @@ export function initializeDatabase() {
     materialsData = [...materials]
     inventoryData = generateSampleInventory(productionsData, ordersData)
     dispatchData = generateSampleDispatch(inventoryData, ordersData)
-    businessPlanData = generateSampleBusinessPlans()
-    salesPlanData = generateSampleSalesPlans()
-    shipmentData = generateSampleShipments(inventoryData, ordersData, dispatchData, salesPlanData)
+    
+    // JSON 파일에서 하드코딩된 데이터 로드
+    const dataDir = path.join(process.cwd(), "data")
+    const businessPlansPath = path.join(dataDir, "business-plans.json")
+    const salesPlansPath = path.join(dataDir, "sales-plans.json")
+    const shipmentsPath = path.join(dataDir, "shipments.json")
+    
+    if (fs.existsSync(businessPlansPath)) {
+      console.log("[v0] Loading business plans from JSON file...")
+      businessPlanData = JSON.parse(fs.readFileSync(businessPlansPath, "utf-8")) as BusinessPlan[]
+    } else {
+      businessPlanData = generateSampleBusinessPlans()
+    }
+    
+    if (fs.existsSync(salesPlansPath)) {
+      console.log("[v0] Loading sales plans from JSON file...")
+      salesPlanData = JSON.parse(fs.readFileSync(salesPlansPath, "utf-8")) as SalesPlan[]
+    } else {
+      salesPlanData = generateSampleSalesPlans(businessPlanData)
+    }
+    
+    if (fs.existsSync(shipmentsPath)) {
+      console.log("[v0] Loading shipments from JSON file...")
+      shipmentData = JSON.parse(fs.readFileSync(shipmentsPath, "utf-8")) as Shipment[]
+    } else {
+      shipmentData = generateSampleShipments(inventoryData, ordersData, dispatchData, salesPlanData)
+    }
+    
     salesPlanHistoryData = generateSampleSalesPlanHistory(salesPlanData)
     shipmentPlanHistoryData = generateSampleShipmentPlanHistory(shipmentData)
 
@@ -1039,54 +1188,6 @@ export const db = {
     getByCustomer: (customer: string) => shipmentPlanHistoryData.filter((h) => h.customer === customer),
   },
 }
-
-const productPortfolio = [
-  { code: "ESS-001", category: "ESS" as ProductCategory, name: "ESS Module A", destination: "일본", unitPrice: 150 },
-  { code: "ESS-002", category: "ESS" as ProductCategory, name: "ESS Module B", destination: "일본", unitPrice: 155 },
-  { code: "EV-100", category: "EV" as ProductCategory, name: "EV Battery Module", destination: "유럽", unitPrice: 200 },
-  {
-    code: "EV-100K",
-    category: "EV" as ProductCategory,
-    name: "EV Battery Module",
-    destination: "창원",
-    unitPrice: 200,
-  },
-  { code: "EV-200", category: "EV" as ProductCategory, name: "EV Pack Assembly", destination: "유럽", unitPrice: 250 },
-  { code: "SV-001", category: "SV" as ProductCategory, name: "Service Module A", destination: "울산", unitPrice: 120 },
-  { code: "SV-002", category: "SV" as ProductCategory, name: "Service Module B", destination: "경주", unitPrice: 115 },
-  {
-    code: "PLBM-A01",
-    category: "PLBM" as ProductCategory,
-    name: "PLBM Spec A1",
-    destination: "울산글로비스",
-    route: ["광주", "경주", "울산사외창고", "울산글로비스"],
-    unitPrice: 180,
-  },
-  {
-    code: "PLBM-A02",
-    category: "PLBM" as ProductCategory,
-    name: "PLBM Spec A2",
-    destination: "울산글로비스",
-    route: ["광주", "울산글로비스"],
-    unitPrice: 175,
-  },
-  {
-    code: "PLBM-B01",
-    category: "PLBM" as ProductCategory,
-    name: "PLBM Spec B1",
-    destination: "경주",
-    route: ["광주", "경주"],
-    unitPrice: 170,
-  },
-  {
-    code: "PLBM-B02",
-    category: "PLBM" as ProductCategory,
-    name: "PLBM Spec B2",
-    destination: "울산사외창고",
-    route: ["광주", "울산사외창고"],
-    unitPrice: 172,
-  },
-]
 
 const materials: Material[] = [
   {

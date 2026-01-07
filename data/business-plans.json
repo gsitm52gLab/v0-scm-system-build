@@ -1,0 +1,212 @@
+[
+  {
+    "id": "BP-2024",
+    "year": 2024,
+    "totalTarget": 50000,
+    "totalRevenue": 10000000,
+    "monthlyTargets": [
+      {
+        "month": 1,
+        "target": 4722,
+        "revenue": 944325
+      },
+      {
+        "month": 2,
+        "target": 2438,
+        "revenue": 487534
+      },
+      {
+        "month": 3,
+        "target": 3660,
+        "revenue": 731897
+      },
+      {
+        "month": 4,
+        "target": 3166,
+        "revenue": 633105
+      },
+      {
+        "month": 5,
+        "target": 6671,
+        "revenue": 1334190
+      },
+      {
+        "month": 6,
+        "target": 2062,
+        "revenue": 412355
+      },
+      {
+        "month": 7,
+        "target": 5609,
+        "revenue": 1121691
+      },
+      {
+        "month": 8,
+        "target": 5433,
+        "revenue": 1086688
+      },
+      {
+        "month": 9,
+        "target": 2881,
+        "revenue": 576297
+      },
+      {
+        "month": 10,
+        "target": 5447,
+        "revenue": 1089413
+      },
+      {
+        "month": 11,
+        "target": 5928,
+        "revenue": 1185683
+      },
+      {
+        "month": 12,
+        "target": 1983,
+        "revenue": 396822
+      }
+    ],
+    "createdAt": "2024-01-01",
+    "updatedAt": "2024-01-01"
+  },
+  {
+    "id": "BP-2025",
+    "year": 2025,
+    "totalTarget": 60000,
+    "totalRevenue": 12000000,
+    "monthlyTargets": [
+      {
+        "month": 1,
+        "target": 7244,
+        "revenue": 1448702
+      },
+      {
+        "month": 2,
+        "target": 5154,
+        "revenue": 1030772
+      },
+      {
+        "month": 3,
+        "target": 3995,
+        "revenue": 799050
+      },
+      {
+        "month": 4,
+        "target": 6192,
+        "revenue": 1238352
+      },
+      {
+        "month": 5,
+        "target": 3709,
+        "revenue": 741748
+      },
+      {
+        "month": 6,
+        "target": 4161,
+        "revenue": 832137
+      },
+      {
+        "month": 7,
+        "target": 4918,
+        "revenue": 983750
+      },
+      {
+        "month": 8,
+        "target": 4098,
+        "revenue": 819485
+      },
+      {
+        "month": 9,
+        "target": 6916,
+        "revenue": 1383534
+      },
+      {
+        "month": 10,
+        "target": 4849,
+        "revenue": 969844
+      },
+      {
+        "month": 11,
+        "target": 3009,
+        "revenue": 601786
+      },
+      {
+        "month": 12,
+        "target": 5755,
+        "revenue": 1150840
+      }
+    ],
+    "createdAt": "2025-01-01",
+    "updatedAt": "2025-01-01"
+  },
+  {
+    "id": "BP-2026",
+    "year": 2026,
+    "totalTarget": 70000,
+    "totalRevenue": 14000000,
+    "monthlyTargets": [
+      {
+        "month": 1,
+        "target": 6179,
+        "revenue": 1235803
+      },
+      {
+        "month": 2,
+        "target": 5529,
+        "revenue": 1105925
+      },
+      {
+        "month": 3,
+        "target": 8509,
+        "revenue": 1701922
+      },
+      {
+        "month": 4,
+        "target": 7059,
+        "revenue": 1411923
+      },
+      {
+        "month": 5,
+        "target": 4316,
+        "revenue": 863197
+      },
+      {
+        "month": 6,
+        "target": 4814,
+        "revenue": 962892
+      },
+      {
+        "month": 7,
+        "target": 5379,
+        "revenue": 1075793
+      },
+      {
+        "month": 8,
+        "target": 6358,
+        "revenue": 1271542
+      },
+      {
+        "month": 9,
+        "target": 6444,
+        "revenue": 1288575
+      },
+      {
+        "month": 10,
+        "target": 2790,
+        "revenue": 557943
+      },
+      {
+        "month": 11,
+        "target": 5657,
+        "revenue": 1131280
+      },
+      {
+        "month": 12,
+        "target": 6966,
+        "revenue": 1393205
+      }
+    ],
+    "createdAt": "2026-01-01",
+    "updatedAt": "2026-01-01"
+  }
+]

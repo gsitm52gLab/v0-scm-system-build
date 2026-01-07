@@ -27,7 +27,7 @@ import type { BusinessPlan, SalesPlan, SalesPlanHistory, Shipment } from "@/lib/
 export default function SalesPage() {
   const [businessPlans, setBusinessPlans] = useState<BusinessPlan[]>([])
   const [salesPlans, setSalesPlans] = useState<SalesPlan[]>([])
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
+  const [selectedYear, setSelectedYear] = useState(2026) // 2026년으로 초기값 설정
   const [selectedMonth, setSelectedMonth] = useState<string>("03") // 3월로 초기값 설정
   const [selectedCustomer, setSelectedCustomer] = useState<string>("all")
   const [selectedStatus, setSelectedStatus] = useState<string>("all")
@@ -40,11 +40,17 @@ export default function SalesPage() {
   const [planHistory, setPlanHistory] = useState<SalesPlanHistory[]>([])
   const [editingMode, setEditingMode] = useState(false)
   const [selectedPlans, setSelectedPlans] = useState<string[]>([])
+  const [shipments, setShipments] = useState<Shipment[]>([])
   const { toast } = useToast()
 
   useEffect(() => {
-    fetchBusinessPlans()
-    fetchSalesPlans()
+    const loadData = async () => {
+      await fetchBusinessPlans()
+      await fetchSalesPlans()
+      const shipmentData = await fetchShipmentPlans()
+      setShipments(shipmentData || [])
+    }
+    loadData()
   }, [selectedYear])
 
   useEffect(() => {
@@ -292,7 +298,7 @@ export default function SalesPage() {
       const response = await fetch(`/api/shipments`)
       const data = await response.json()
       if (data.success) {
-        return data.data
+        return data.data || []
       }
       return []
     } catch (error) {
@@ -307,9 +313,18 @@ export default function SalesPage() {
   useEffect(() => {
     const prepareComparisonData = async () => {
       const currentBusinessPlan = businessPlans.find((bp) => bp.year === selectedYear)
+      if (!currentBusinessPlan) return
+      
+      // 전체 판매계획 데이터 가져오기 (필터링 없이)
+      const allSalesPlansResponse = await fetch(`/api/sales-plan?year=${selectedYear}`)
+      const allSalesPlansData = await allSalesPlansResponse.json()
+      const allSalesPlans = allSalesPlansData.success ? (allSalesPlansData.data || []) : []
+      
       // 승인된 판매계획만 그래프에 포함
-      const approvedPlans = salesPlans.filter((p) => p.status === "approved")
-      const monthlySalesPlans = approvedPlans.reduce((acc, plan) => {
+      const approvedPlans = allSalesPlans.filter((p: SalesPlan) => p.status === "approved")
+      const monthlySalesPlans = approvedPlans.reduce((acc: Record<string, { quantity: number; revenue: number }>, plan: SalesPlan) => {
+        const planYear = plan.yearMonth.split("-")[0]
+        if (planYear !== String(selectedYear)) return acc
         const month = plan.yearMonth.split("-")[1]
         if (!acc[month]) {
           acc[month] = { quantity: 0, revenue: 0 }
@@ -319,35 +334,52 @@ export default function SalesPage() {
         return acc
       }, {} as Record<string, { quantity: number; revenue: number }>)
 
-      const shipments = await fetchShipmentPlans()
-      const monthlyShipments = shipments.reduce((acc: Record<string, { quantity: number }>, shipment: Shipment) => {
+      // 출하계획 데이터 가져오기 (항상 최신 데이터 가져오기)
+      const shipmentsData = await fetchShipmentPlans()
+      
+      const monthlyShipments = (shipmentsData || []).reduce((acc: Record<string, { quantity: number; revenue: number }>, shipment: Shipment) => {
+        if (!shipment || !shipment.shipmentDate) return acc
         const shipmentYear = shipment.shipmentDate.split("-")[0]
         if (shipmentYear !== String(selectedYear)) return acc
         const month = shipment.shipmentDate.split("-")[1]
+        if (!month || month.length !== 2) return acc
         if (!acc[month]) {
-          acc[month] = { quantity: 0 }
+          acc[month] = { quantity: 0, revenue: 0 }
         }
-        acc[month].quantity += shipment.products.reduce((sum, p) => sum + p.quantity, 0)
+        const shipmentQuantity = shipment.products?.reduce((sum, p) => sum + (p.quantity || 0), 0) || 0
+        const shipmentRevenue = (shipment.totalAmount || 0) / 10000 // 원 단위를 만원 단위로 변환
+        acc[month].quantity += shipmentQuantity
+        acc[month].revenue += shipmentRevenue
         return acc
-      }, {} as Record<string, { quantity: number }>)
+      }, {} as Record<string, { quantity: number; revenue: number }>)
+      
+      // 출하계획 데이터를 state에 저장
+      if (shipmentsData && shipmentsData.length > 0) {
+        setShipments(shipmentsData)
+      }
 
       const months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
-      const monthlyBusinessTarget = currentBusinessPlan ? currentBusinessPlan.totalTarget / 12 : 0
-
+      
       setComparisonData(
-        months.map((month) => ({
-          month: `${month}월`,
-          경영계획: Math.round(monthlyBusinessTarget),
-          판매계획: monthlySalesPlans[month]?.quantity || 0,
-          출하계획: monthlyShipments[month]?.quantity || 0,
-        })),
+        months.map((month) => {
+          const monthNum = parseInt(month)
+          const monthlyBusinessTarget = currentBusinessPlan?.monthlyTargets?.find((mt) => mt.month === monthNum)?.target || 
+                                       (currentBusinessPlan ? Math.round(currentBusinessPlan.totalTarget / 12) : 0)
+          
+          return {
+            month: `${month}월`,
+            경영계획: monthlyBusinessTarget,
+            판매계획: monthlySalesPlans[month]?.quantity || 0,
+            출하계획: monthlyShipments[month]?.quantity || 0,
+          }
+        }),
       )
     }
 
     if (businessPlans.length > 0) {
       prepareComparisonData()
     }
-  }, [selectedYear, salesPlans, businessPlans])
+  }, [selectedYear, businessPlans])
 
   const currentBusinessPlan = businessPlans.find((bp) => bp.year === selectedYear)
   // 필터링은 API에서 처리되므로 salesPlans를 그대로 사용
@@ -366,7 +398,7 @@ export default function SalesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>연별 경영계획</CardTitle>
-                <CardDescription>{selectedYear}년도 경영계획 목표</CardDescription>
+                <CardDescription>{selectedYear}년도 경영계획 목표 및 실적 (3월 기준)</CardDescription>
               </div>
               <Select value={String(selectedYear)} onValueChange={(value) => setSelectedYear(parseInt(value))}>
                 <SelectTrigger className="w-[180px]">
@@ -382,14 +414,73 @@ export default function SalesPage() {
           </CardHeader>
           <CardContent>
             {currentBusinessPlan ? (
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label>연간 목표 수량</Label>
-                  <div className="text-3xl font-bold">{currentBusinessPlan.totalTarget.toLocaleString()}대</div>
+              <div className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label>연간 목표 수량</Label>
+                    <div className="text-3xl font-bold">{currentBusinessPlan.totalTarget.toLocaleString()}대</div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>연간 목표 매출</Label>
+                    <div className="text-3xl font-bold">{currentBusinessPlan.totalRevenue.toLocaleString()}만원</div>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label>연간 목표 매출</Label>
-                  <div className="text-3xl font-bold">{currentBusinessPlan.totalRevenue.toLocaleString()}만원</div>
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-semibold mb-4">
+                    {selectedYear >= 2026 ? "3월 누적 실적" : "12월 누적 실적"}
+                  </h3>
+                  <div className="grid gap-6 md:grid-cols-3">
+                    <div className="space-y-2">
+                      <Label>목표 매출 ({selectedYear >= 2026 ? "1-3월" : "1-12월"})</Label>
+                      <div className="text-2xl font-bold">
+                        {(() => {
+                          const targetMonths = selectedYear >= 2026 ? 3 : 12
+                          return currentBusinessPlan.monthlyTargets
+                            ?.slice(0, targetMonths)
+                            .reduce((sum, mt) => sum + mt.revenue, 0)
+                            .toLocaleString() || Math.round((currentBusinessPlan.totalRevenue / 12) * targetMonths).toLocaleString()
+                        })()}
+                        만원
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>누적 출하 실적 ({selectedYear >= 2026 ? "1-3월" : "1-12월"})</Label>
+                      <div className="text-2xl font-bold text-blue-600">
+                        {(() => {
+                          const targetMonths = selectedYear >= 2026 ? 3 : 12
+                          const cumulativeShipments = (shipments || []).filter((s) => {
+                            if (!s.shipmentDate) return false
+                            const year = s.shipmentDate.split("-")[0]
+                            const month = parseInt(s.shipmentDate.split("-")[1])
+                            return year === String(selectedYear) && month >= 1 && month <= targetMonths
+                          })
+                          const totalRevenue = cumulativeShipments.reduce((sum, s) => sum + ((s.totalAmount || 0) / 10000), 0)
+                          return `${Math.round(totalRevenue).toLocaleString()}만원`
+                        })()}
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>달성률</Label>
+                      <div className="text-2xl font-bold text-green-600">
+                        {(() => {
+                          const targetMonths = selectedYear >= 2026 ? 3 : 12
+                          const targetRevenue = currentBusinessPlan.monthlyTargets
+                            ?.slice(0, targetMonths)
+                            .reduce((sum, mt) => sum + mt.revenue, 0) || Math.round((currentBusinessPlan.totalRevenue / 12) * targetMonths)
+                          const cumulativeShipments = (shipments || []).filter((s) => {
+                            if (!s.shipmentDate) return false
+                            const year = s.shipmentDate.split("-")[0]
+                            const month = parseInt(s.shipmentDate.split("-")[1])
+                            return year === String(selectedYear) && month >= 1 && month <= targetMonths
+                          })
+                          const actualRevenue = cumulativeShipments.reduce((sum, s) => sum + ((s.totalAmount || 0) / 10000), 0)
+                          const achievementRate = targetRevenue > 0 ? Math.round((actualRevenue / targetRevenue) * 100) : 0
+                          return `${achievementRate}`
+                        })()}
+                        %
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : (
@@ -424,424 +515,7 @@ export default function SalesPage() {
           </CardContent>
         </Card>
 
-        {/* 업체별 판매계획 */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>업체별 판매계획</CardTitle>
-                <CardDescription>{selectedYear}년 {selectedMonth}월 판매계획 상세</CardDescription>
-              </div>
-              <div className="flex items-center gap-3">
-                <Select value={selectedCustomer} onValueChange={setSelectedCustomer}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="전체 업체" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">전체 업체</SelectItem>
-                    <SelectItem value="현대차">현대차</SelectItem>
-                    <SelectItem value="삼성SDI">삼성SDI</SelectItem>
-                    <SelectItem value="일본거래처">일본거래처</SelectItem>
-                    <SelectItem value="유럽거래처">유럽거래처</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="월 선택" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 12 }, (_, i) => {
-                      const month = String(i + 1).padStart(2, "0")
-                      return (
-                        <SelectItem key={month} value={month}>
-                          {i + 1}월
-                        </SelectItem>
-                      )
-                    })}
-                  </SelectContent>
-                </Select>
-                <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="전체 상태" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">전체 상태</SelectItem>
-                    <SelectItem value="draft">변경요청</SelectItem>
-                    <SelectItem value="approved">승인</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-center gap-3">
-                <Button variant="outline" onClick={handleExportExcel}>
-                  <Download className="w-4 h-4 mr-2" />
-                  엑셀 다운로드
-                </Button>
-                <label>
-                  <input
-                    type="file"
-                    accept=".csv,.xlsx,.xls"
-                    onChange={handleUploadExcel}
-                    className="hidden"
-                  />
-                  <Button variant="outline" asChild>
-                    <span>
-                      <Upload className="w-4 h-4 mr-2" />
-                      엑셀 업로드
-                    </span>
-                  </Button>
-                </label>
-                {editingMode ? (
-                  <>
-                    <Button variant="outline" onClick={() => { setEditingMode(false); fetchSalesPlans(); }}>
-                      취소
-                    </Button>
-                    <Button onClick={handleBulkSave}>
-                      <Save className="w-4 h-4 mr-2" />
-                      저장
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button variant="outline" onClick={() => setEditingMode(true)}>
-                      <Edit2 className="w-4 h-4 mr-2" />
-                      수정 모드
-                    </Button>
-                    <Button
-                      onClick={handleApprovePlans}
-                      disabled={selectedPlans.length === 0}
-                      className="bg-green-600 hover:bg-green-700"
-                    >
-                      <CheckCircle2 className="w-4 h-4 mr-2" />
-                      승인 ({selectedPlans.length})
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="text-center py-8 text-muted-foreground">데이터를 불러오는 중...</div>
-            ) : salesPlans.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">판매계획 데이터가 없습니다.</div>
-            ) : (
-              <div className="border rounded-lg">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      {!editingMode && (
-                        <TableHead className="w-12">
-                          <input
-                            type="checkbox"
-                            checked={salesPlans.every((p) => selectedPlans.includes(p.id)) && salesPlans.length > 0}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setSelectedPlans(salesPlans.map((p) => p.id))
-                              } else {
-                                setSelectedPlans([])
-                              }
-                            }}
-                            className="rounded border-input"
-                          />
-                        </TableHead>
-                      )}
-                      <TableHead>업체</TableHead>
-                      <TableHead>연월</TableHead>
-                      <TableHead>제품코드</TableHead>
-                      <TableHead>제품명</TableHead>
-                      <TableHead>카테고리</TableHead>
-                      <TableHead>계획수량</TableHead>
-                      <TableHead>계획매출(만원)</TableHead>
-                      <TableHead>상태</TableHead>
-                      <TableHead>작업</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {salesPlans
-                      .sort((a, b) => {
-                        const customerCompare = a.customer.localeCompare(b.customer)
-                        if (customerCompare !== 0) return customerCompare
-                        return a.yearMonth.localeCompare(b.yearMonth)
-                      })
-                      .map((plan) => (
-                        <TableRow key={plan.id}>
-                          {!editingMode && (
-                            <TableCell>
-                              <input
-                                type="checkbox"
-                                checked={selectedPlans.includes(plan.id)}
-                                onChange={(e) => {
-                                  if (e.target.checked) {
-                                    setSelectedPlans([...selectedPlans, plan.id])
-                                  } else {
-                                    setSelectedPlans(selectedPlans.filter((id) => id !== plan.id))
-                                  }
-                                }}
-                                className="rounded border-input"
-                              />
-                            </TableCell>
-                          )}
-                          <TableCell className="font-medium">{plan.customer}</TableCell>
-                          <TableCell>{plan.yearMonth}</TableCell>
-                          <TableCell className="font-medium">{plan.productCode}</TableCell>
-                          <TableCell>{plan.product}</TableCell>
-                          <TableCell>
-                            <Badge variant="outline">{plan.category}</Badge>
-                          </TableCell>
-                          <TableCell>
-                            {editingMode ? (
-                              <Input
-                                type="number"
-                                value={plan.plannedQuantity}
-                                onChange={(e) => {
-                                  const updatedPlans = salesPlans.map((p) =>
-                                    p.id === plan.id
-                                      ? { ...p, plannedQuantity: parseInt(e.target.value) || 0, plannedRevenue: (parseInt(e.target.value) || 0) * (plan.plannedRevenue / plan.plannedQuantity || 200) }
-                                      : p,
-                                  )
-                                  setSalesPlans(updatedPlans)
-                                }}
-                                className="w-24"
-                              />
-                            ) : (
-                              plan.plannedQuantity.toLocaleString()
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {editingMode ? (
-                              <Input
-                                type="number"
-                                value={plan.plannedRevenue}
-                                onChange={(e) => {
-                                  const updatedPlans = salesPlans.map((p) =>
-                                    p.id === plan.id ? { ...p, plannedRevenue: parseInt(e.target.value) || 0 } : p,
-                                  )
-                                  setSalesPlans(updatedPlans)
-                                }}
-                                className="w-32"
-                              />
-                            ) : (
-                              plan.plannedRevenue.toLocaleString()
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant={plan.status === "approved" ? "default" : "secondary"}>
-                              {plan.status === "approved" ? "승인" : "변경요청"}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              {!editingMode && (
-                                <>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => setEditingPlan(plan)}
-                                  >
-                                    <Edit2 className="w-4 h-4" />
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => fetchPlanHistory(plan.id)}
-                                  >
-                                    <History className="w-4 h-4" />
-                                  </Button>
-                                </>
-                              )}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* 편집 다이얼로그 */}
-        <Dialog open={!!editingPlan} onOpenChange={() => setEditingPlan(null)}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>판매계획 수정</DialogTitle>
-              <DialogDescription>판매계획 정보를 수정합니다</DialogDescription>
-            </DialogHeader>
-            {editingPlan && (
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label>업체</Label>
-                  <Input value={editingPlan.customer} disabled />
-                </div>
-                <div className="space-y-2">
-                  <Label>연월</Label>
-                  <Input value={editingPlan.yearMonth} disabled />
-                </div>
-                <div className="space-y-2">
-                  <Label>제품코드</Label>
-                  <Input value={editingPlan.productCode} disabled />
-                </div>
-                <div className="space-y-2">
-                  <Label>제품명</Label>
-                  <Input value={editingPlan.product} disabled />
-                </div>
-                <div className="space-y-2">
-                  <Label>계획수량</Label>
-                  <Input
-                    type="number"
-                    value={editingPlan.plannedQuantity}
-                    onChange={(e) =>
-                      setEditingPlan({
-                        ...editingPlan,
-                        plannedQuantity: parseInt(e.target.value) || 0,
-                        plannedRevenue: (parseInt(e.target.value) || 0) * (editingPlan.plannedRevenue / editingPlan.plannedQuantity || 200),
-                      })
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>계획매출(만원)</Label>
-                  <Input
-                    type="number"
-                    value={editingPlan.plannedRevenue}
-                    onChange={(e) =>
-                      setEditingPlan({ ...editingPlan, plannedRevenue: parseInt(e.target.value) || 0 })
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>변경 요청 의견</Label>
-                  <textarea
-                    value={editingPlan.changeRequestComment || ""}
-                    onChange={(e) =>
-                      setEditingPlan({ ...editingPlan, changeRequestComment: e.target.value })
-                    }
-                    className="w-full min-h-[100px] rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                    placeholder="변경 요청 사유를 입력하세요"
-                  />
-                </div>
-              </div>
-            )}
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setEditingPlan(null)}>
-                취소
-              </Button>
-              <Button onClick={() => editingPlan && handleSavePlan(editingPlan)}>저장</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* 승인 다이얼로그 */}
-        <Dialog open={showApprovalDialog} onOpenChange={setShowApprovalDialog}>
-          <DialogContent className="max-w-3xl">
-            <DialogHeader>
-              <DialogTitle>판매계획 승인</DialogTitle>
-              <DialogDescription>선택한 판매계획을 승인합니다</DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="max-h-[400px] overflow-y-auto space-y-3">
-                {approvalPlans.map((plan) => (
-                  <div key={plan.id} className="border rounded-lg p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-1">
-                        <div className="font-medium">
-                          {plan.customer} - {plan.product} ({plan.productCode})
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {plan.yearMonth} | 수량: {plan.plannedQuantity.toLocaleString()} | 매출: {plan.plannedRevenue.toLocaleString()}만원
-                        </div>
-                        {plan.changeRequestComment && (
-                          <div className="mt-2 p-2 bg-muted rounded text-sm">
-                            <div className="font-medium mb-1">변경 요청 의견:</div>
-                            <div>{plan.changeRequestComment}</div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="space-y-2">
-                <Label>승인 의견</Label>
-                <textarea
-                  value={approvalComment}
-                  onChange={(e) => setApprovalComment(e.target.value)}
-                  className="w-full min-h-[100px] rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                  placeholder="승인 의견을 입력하세요 (선택사항)"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => { setShowApprovalDialog(false); setApprovalComment(""); }}>
-                취소
-              </Button>
-              <Button onClick={handleConfirmApproval} className="bg-green-600 hover:bg-green-700">
-                승인
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* 이력 다이얼로그 */}
-        <Dialog open={showHistoryDialog} onOpenChange={setShowHistoryDialog}>
-          <DialogContent className="max-w-3xl">
-            <DialogHeader>
-              <DialogTitle>판매계획 변경 이력</DialogTitle>
-              <DialogDescription>판매계획의 변경 내역을 확인합니다</DialogDescription>
-            </DialogHeader>
-            <div className="max-h-[500px] overflow-y-auto">
-              {planHistory.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">변경 이력이 없습니다.</div>
-              ) : (
-                <div className="border rounded-lg">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>변경일시</TableHead>
-                        <TableHead>업체</TableHead>
-                        <TableHead>제품코드</TableHead>
-                        <TableHead>이전 수량</TableHead>
-                        <TableHead>변경 수량</TableHead>
-                        <TableHead>이전 매출</TableHead>
-                        <TableHead>변경 매출</TableHead>
-                        <TableHead>이전 상태</TableHead>
-                        <TableHead>변경 상태</TableHead>
-                        <TableHead>변경자</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {planHistory
-                        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-                        .map((history) => (
-                          <TableRow key={history.id}>
-                            <TableCell>{new Date(history.createdAt).toLocaleString("ko-KR")}</TableCell>
-                            <TableCell>{history.customer}</TableCell>
-                            <TableCell>{history.productCode}</TableCell>
-                            <TableCell>{history.previousQuantity.toLocaleString()}</TableCell>
-                            <TableCell className="font-semibold">{history.newQuantity.toLocaleString()}</TableCell>
-                            <TableCell>{history.previousRevenue.toLocaleString()}</TableCell>
-                            <TableCell className="font-semibold">{history.newRevenue.toLocaleString()}</TableCell>
-                            <TableCell>
-                              <Badge variant="secondary">{history.previousStatus || "-"}</Badge>
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant={history.newStatus === "approved" ? "default" : "secondary"}>
-                                {history.newStatus || "-"}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>{history.changedBy}</TableCell>
-                          </TableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
-            </div>
-            <DialogFooter>
-              <Button onClick={() => setShowHistoryDialog(false)}>닫기</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        {/* 업체별 판매계획 관리는 판매계획 관리 페이지(/sales-management)로 이동됨 */}
 
         <Toaster />
       </div>

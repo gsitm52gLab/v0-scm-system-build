@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import { ClipboardList, Package, Factory, Truck, BarChart3, LogOut, User, Boxes } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { canAccessPage } from "@/lib/auth"
 import Image from "next/image"
 
@@ -23,6 +24,7 @@ export function Navigation() {
     { href: "/", label: "대시보드", icon: BarChart3 },
     { href: "/orders", label: "발주 계획", icon: ClipboardList, role: "발주사" },
     { href: "/sales", label: "판매 계획", icon: Package, role: "창고관리자" },
+    { href: "/sales-management", label: "판매계획 관리", icon: Package, role: "창고관리자" },
     { href: "/production", label: "생산 계획", icon: Factory, role: "생산관리자" },
     { href: "/production-performance", label: "생산 실적", icon: BarChart3, role: "생산관리자" },
     { href: "/materials", label: "자재 관리", icon: Boxes, role: "자재관리자" },
@@ -105,5 +107,3 @@ export function Navigation() {
     </div>
   )
 }
-
-import { Badge } from "@/components/ui/badge"

@@ -70,8 +70,8 @@ export const rolePermissions = {
     canEdit: ["/orders"],
   },
   창고관리자: {
-    canView: ["/", "/orders", "/sales", "/production", "/dispatch", "/materials", "/shipments"],
-    canEdit: ["/sales", "/dispatch", "/shipments"],
+    canView: ["/", "/orders", "/sales", "/sales-management", "/production", "/dispatch", "/materials", "/shipments"],
+    canEdit: ["/sales", "/sales-management", "/dispatch", "/shipments"],
   },
   생산관리자: {
     canView: ["/", "/production", "/materials"],
