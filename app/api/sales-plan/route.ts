@@ -90,4 +90,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, error: "Failed to create/update sales plan" }, { status: 500 })
   }
 }
-
