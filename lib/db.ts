@@ -107,6 +107,66 @@ export interface BOM {
   }[]
 }
 
+// 연별 경영계획
+export interface BusinessPlan {
+  id: string
+  year: number
+  totalTarget: number // 연간 목표 수량
+  totalRevenue: number // 연간 목표 매출 (만원)
+  createdAt: string
+  updatedAt: string
+}
+
+// 업체별 판매계획
+export interface SalesPlan {
+  id: string
+  yearMonth: string // YYYY-MM 형식
+  customer: "현대차" | "삼성SDI" | "일본거래처" | "유럽거래처"
+  productCode: string
+  product: string
+  category: ProductCategory
+  plannedQuantity: number // 계획 수량
+  plannedRevenue: number // 계획 매출 (만원)
+  status: "draft" | "approved" // 변경요청 또는 승인 확정
+  changeRequestComment?: string // 변경 요청 의견
+  approvalComment?: string // 승인 의견
+  createdAt: string
+  updatedAt: string
+}
+
+// 판매계획 이력
+export interface SalesPlanHistory {
+  id: string
+  salesPlanId: string
+  yearMonth: string
+  customer: string
+  productCode: string
+  previousQuantity: number
+  newQuantity: number
+  previousRevenue: number
+  newRevenue: number
+  previousStatus?: string
+  newStatus?: string
+  changedBy: string // 변경자 (사용자명)
+  changeReason?: string // 변경 사유
+  createdAt: string
+}
+
+// 출하계획 이력
+export interface ShipmentPlanHistory {
+  id: string
+  shipmentId: string
+  shipmentNumber: string
+  customer: string
+  previousQuantity: number
+  newQuantity: number
+  previousDate?: string
+  newDate?: string
+  changedBy: string
+  changeReason?: string
+  createdAt: string
+}
+
 // Generate sample data for 2024-01 to 2025-12
 function calculateLeadTime(category: ProductCategory): number {
   const leadTimes = {
@@ -465,66 +525,262 @@ function generateSampleShipments(
   inventoryData: Inventory[],
   ordersData: Order[],
   dispatchData: Dispatch[],
+  salesPlanData: SalesPlan[],
 ): Shipment[] {
   const shipments: Shipment[] = []
-  const completedInventory = inventoryData.filter((inv) => inv.quantity > 0)
-
-  for (let i = 0; i < Math.min(15, completedInventory.length); i++) {
-    const inv = completedInventory[i]
-    const relatedOrder = ordersData.find((o) => o.product === inv.product)
-
-    if (relatedOrder) {
-      const quantity = Math.floor(inv.quantity * (0.5 + Math.random() * 0.5))
-      const unitPrice = 100000 + Math.random() * 900000
-
-      const today = new Date("2025-12-22")
-      const daysIntoWeek = today.getDay()
-      const weekStart = new Date(today)
-      weekStart.setDate(weekStart.getDate() - daysIntoWeek + 1)
-
-      // Random day within this week or next week for variety
-      const targetWeekStart = Math.random() > 0.5 ? weekStart : new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000)
-      const randomDayOffset = Math.floor(Math.random() * 7)
-      const shipmentDate = new Date(targetWeekStart)
-      shipmentDate.setDate(shipmentDate.getDate() + randomDayOffset)
-
-      const assignedDispatches = dispatchData
-        .filter((d) => d.status === "planned" || d.status === "dispatched" || d.status === "completed")
-        .slice(i * 2, i * 2 + Math.floor(Math.random() * 2) + 1)
-
-      let shipmentStatus: Shipment["status"] = "registered"
-      if (assignedDispatches.length > 0) {
-        if (assignedDispatches.some((d) => d.status === "completed")) {
-          shipmentStatus = "completed"
-        } else if (assignedDispatches.some((d) => d.status === "dispatched")) {
-          shipmentStatus = "dispatched"
-        }
-      }
-
-      shipments.push({
-        id: `SHP-${Date.now()}-${i}`,
-        shipmentNumber: `SHP-2025-${String(1001 + i).padStart(5, "0")}`,
-        customer: relatedOrder.customer,
-        destination: relatedOrder.destination,
-        shipmentDate: shipmentDate.toISOString().split("T")[0],
-        products: [
-          {
-            productCode: inv.product,
-            product: inv.product,
-            category: inv.category,
-            quantity: quantity,
-          },
-        ],
-        totalAmount: quantity * unitPrice,
-        status: shipmentStatus,
-        dispatchIds: assignedDispatches.map((d) => d.id),
-        dispatchInfo: assignedDispatches.length > 0 ? assignedDispatches : undefined,
-        createdAt: new Date().toISOString(),
-      })
+  
+  // 판매계획 데이터를 연월별로 그룹화
+  const salesPlansByMonth: Record<string, SalesPlan[]> = {}
+  salesPlanData.forEach((plan) => {
+    if (!salesPlansByMonth[plan.yearMonth]) {
+      salesPlansByMonth[plan.yearMonth] = []
     }
+    salesPlansByMonth[plan.yearMonth].push(plan)
+  })
+
+  // 1월부터 3월까지 출하계획 생성
+  const targetYear = 2025
+  for (let month = 1; month <= 3; month++) {
+    const yearMonth = `${targetYear}-${String(month).padStart(2, "0")}`
+    const monthSalesPlans = salesPlansByMonth[yearMonth] || []
+    
+    // 해당 월의 판매계획을 업체별로 그룹화
+    const plansByCustomer: Record<string, SalesPlan[]> = {}
+    monthSalesPlans.forEach((plan) => {
+      if (!plansByCustomer[plan.customer]) {
+        plansByCustomer[plan.customer] = []
+      }
+      plansByCustomer[plan.customer].push(plan)
+    })
+
+    // 각 업체별로 출하계획 생성
+    Object.keys(plansByCustomer).forEach((customer, customerIndex) => {
+      const customerPlans = plansByCustomer[customer]
+      
+      customerPlans.forEach((plan, planIndex) => {
+        // 판매계획의 반 정도 수량으로 출하계획 생성
+        const shipmentQuantity = Math.floor(plan.plannedQuantity * 0.5)
+        if (shipmentQuantity <= 0) return
+
+        const unitPrice = plan.plannedRevenue / plan.plannedQuantity || 200
+        const shipmentDate = new Date(`${yearMonth}-${String(15 + planIndex * 2).padStart(2, "0")}`)
+        
+        // 배차 정보 찾기
+        const relatedOrder = ordersData.find(
+          (o) => o.customer === customer && o.product === plan.productCode && o.orderDate === yearMonth
+        )
+        
+        const assignedDispatches = dispatchData
+          .filter((d) => d.dispatchDate.startsWith(yearMonth))
+          .slice(customerIndex * 2, customerIndex * 2 + 1)
+
+        let shipmentStatus: Shipment["status"] = "registered"
+        if (assignedDispatches.length > 0) {
+          if (assignedDispatches.some((d) => d.status === "completed")) {
+            shipmentStatus = "completed"
+          } else if (assignedDispatches.some((d) => d.status === "dispatched")) {
+            shipmentStatus = "dispatched"
+          }
+        }
+
+        shipments.push({
+          id: `SHP-${yearMonth}-${customer}-${plan.productCode}`,
+          shipmentNumber: `SHP-${yearMonth.replace(/-/g, "")}-${String(customerIndex * 10 + planIndex + 1).padStart(3, "0")}`,
+          customer: customer,
+          destination: relatedOrder?.destination || "미정",
+          shipmentDate: shipmentDate.toISOString().split("T")[0],
+          products: [
+            {
+              productCode: plan.productCode,
+              product: plan.product,
+              category: plan.category,
+              quantity: shipmentQuantity,
+            },
+          ],
+          totalAmount: shipmentQuantity * unitPrice * 10000, // 만원 단위를 원 단위로 변환
+          status: shipmentStatus,
+          dispatchIds: assignedDispatches.map((d) => d.id),
+          dispatchInfo: assignedDispatches.length > 0 ? assignedDispatches : undefined,
+          createdAt: shipmentDate.toISOString(),
+        })
+      })
+    })
   }
 
   return shipments
+}
+
+// Generate sample business plan data
+function generateSampleBusinessPlans(): BusinessPlan[] {
+  const plans: BusinessPlan[] = []
+  for (let year = 2024; year <= 2026; year++) {
+    const baseTarget = year === 2024 ? 50000 : year === 2025 ? 60000 : 70000
+    plans.push({
+      id: `BP-${year}`,
+      year,
+      totalTarget: baseTarget,
+      totalRevenue: baseTarget * 200, // 평균 단가 200만원 가정
+      createdAt: `${year}-01-01`,
+      updatedAt: `${year}-01-01`,
+    })
+  }
+  return plans
+}
+
+// Generate sample sales plan data (업체별)
+function generateSampleSalesPlans(): SalesPlan[] {
+  const plans: SalesPlan[] = []
+  const customers: SalesPlan["customer"][] = ["현대차", "삼성SDI", "일본거래처", "유럽거래처"]
+  
+  // 업체별 제품 매핑
+  const customerProducts: Record<string, { code: string; name: string; category: ProductCategory }[]> = {
+    현대차: [
+      { code: "EV-100", name: "EV Battery Module", category: "EV" as ProductCategory },
+      { code: "EV-100K", name: "EV Battery Module", category: "EV" as ProductCategory },
+    ],
+    삼성SDI: [
+      { code: "EV-100", name: "EV Battery Module", category: "EV" as ProductCategory },
+      { code: "SV-200", name: "SV Battery Pack", category: "SV" as ProductCategory },
+    ],
+    일본거래처: [
+      { code: "ESS-001", name: "ESS Module A", category: "ESS" as ProductCategory },
+      { code: "ESS-002", name: "ESS Module B", category: "ESS" as ProductCategory },
+    ],
+    유럽거래처: [
+      { code: "PLBM-300", name: "PLBM Battery", category: "PLBM" as ProductCategory },
+      { code: "EV-100", name: "EV Battery Module", category: "EV" as ProductCategory },
+    ],
+  }
+
+  for (let year = 2024; year <= 2026; year++) {
+    for (let month = 1; month <= 12; month++) {
+      const yearMonth = `${year}-${String(month).padStart(2, "0")}`
+      customers.forEach((customer) => {
+        const products = customerProducts[customer] || []
+        products.forEach((product) => {
+          const baseQty = customer === "현대차" ? 500 : customer === "삼성SDI" ? 350 : customer === "일본거래처" ? 50 : 200
+          const variance = Math.floor(Math.random() * 100) - 50
+          const quantity = Math.max(0, baseQty + variance)
+          const unitPrice = product.category === "EV" ? 200 : product.category === "ESS" ? 150 : 180
+          // 과거 데이터는 승인, 현재/미래는 초안
+          const isPast = year < 2025 || (year === 2025 && month < 12)
+          plans.push({
+            id: `SP-${yearMonth}-${customer}-${product.code}`,
+            yearMonth,
+            customer,
+            productCode: product.code,
+            product: product.name,
+            category: product.category,
+            plannedQuantity: quantity,
+            plannedRevenue: quantity * unitPrice,
+            status: isPast ? "approved" : "draft",
+            createdAt: `${yearMonth}-01`,
+            updatedAt: `${yearMonth}-01`,
+          })
+        })
+      })
+    }
+  }
+  return plans
+}
+
+// Generate sample sales plan history
+function generateSampleSalesPlanHistory(salesPlans: SalesPlan[]): SalesPlanHistory[] {
+  const history: SalesPlanHistory[] = []
+  const customers = ["현대차", "삼성SDI", "일본거래처", "유럽거래처"]
+  const users = ["김영업", "이관리", "박팀장", "최대리"]
+
+  // 각 판매계획에 대해 1-3개의 변경 이력 생성
+  salesPlans.forEach((plan) => {
+    const historyCount = Math.floor(Math.random() * 3) + 1
+    let currentQty = plan.plannedQuantity
+    let currentRev = plan.plannedRevenue
+    let currentStatus = "draft"
+
+    for (let i = 0; i < historyCount; i++) {
+      const changeDate = new Date(plan.createdAt)
+      changeDate.setDate(changeDate.getDate() - (historyCount - i) * 2) // 변경일시를 과거로 설정
+
+      const prevQty = currentQty
+      const prevRev = currentRev
+      const prevStatus = currentStatus
+
+      // 수량 변경 (10-20% 증감)
+      const changePercent = (Math.random() * 0.2 - 0.1) // -10% ~ +10%
+      currentQty = Math.max(0, Math.round(prevQty * (1 + changePercent)))
+      currentRev = Math.round(currentQty * (plan.plannedRevenue / plan.plannedQuantity || 200))
+
+      // 상태 변경 (초안 -> 승인)
+      if (i === historyCount - 1 && plan.status === "approved") {
+        currentStatus = "approved"
+      }
+
+      history.push({
+        id: `HIST-SP-${plan.id}-${i}`,
+        salesPlanId: plan.id,
+        yearMonth: plan.yearMonth,
+        customer: plan.customer,
+        productCode: plan.productCode,
+        previousQuantity: prevQty,
+        newQuantity: currentQty,
+        previousRevenue: prevRev,
+        newRevenue: currentRev,
+        previousStatus: prevStatus,
+        newStatus: currentStatus,
+        changedBy: users[Math.floor(Math.random() * users.length)],
+        changeReason: i === historyCount - 1 && plan.status === "approved" ? "승인 확정" : "계획 수정",
+        createdAt: changeDate.toISOString(),
+      })
+    }
+  })
+
+  return history
+}
+
+// Generate sample shipment plan history
+function generateSampleShipmentPlanHistory(shipments: Shipment[]): ShipmentPlanHistory[] {
+  const history: ShipmentPlanHistory[] = []
+  const users = ["김창고", "이배차", "박관리", "최팀장"]
+
+  shipments.forEach((shipment) => {
+    const historyCount = Math.floor(Math.random() * 2) + 1 // 1-2개 이력
+    let currentQty = shipment.products.reduce((sum, p) => sum + p.quantity, 0)
+    let currentDate = shipment.shipmentDate
+
+    for (let i = 0; i < historyCount; i++) {
+      const changeDate = new Date(shipment.createdAt)
+      changeDate.setDate(changeDate.getDate() - (historyCount - i))
+
+      const prevQty = currentQty
+      const prevDate = currentDate
+
+      // 수량 변경 (5-15% 증감)
+      const changePercent = (Math.random() * 0.15 - 0.05)
+      currentQty = Math.max(0, Math.round(prevQty * (1 + changePercent)))
+
+      // 날짜 변경 (1-3일 차이)
+      const dateChange = Math.floor(Math.random() * 3) - 1
+      const newDateObj = new Date(prevDate)
+      newDateObj.setDate(newDateObj.getDate() + dateChange)
+      currentDate = newDateObj.toISOString().split("T")[0]
+
+      history.push({
+        id: `HIST-SHIP-${shipment.id}-${i}`,
+        shipmentId: shipment.id,
+        shipmentNumber: shipment.shipmentNumber,
+        customer: shipment.customer,
+        previousQuantity: prevQty,
+        newQuantity: currentQty,
+        previousDate: prevDate,
+        newDate: currentDate,
+        changedBy: users[Math.floor(Math.random() * users.length)],
+        changeReason: "출하계획 수정",
+        createdAt: changeDate.toISOString(),
+      })
+    }
+  })
+
+  return history
 }
 
 // In-memory storage (will be replaced with real DB in production)
@@ -534,6 +790,10 @@ let materialsData: Material[] = []
 let inventoryData: Inventory[] = []
 let dispatchData: Dispatch[] = []
 let shipmentData: Shipment[] = []
+let businessPlanData: BusinessPlan[] = []
+let salesPlanData: SalesPlan[] = []
+let salesPlanHistoryData: SalesPlanHistory[] = []
+let shipmentPlanHistoryData: ShipmentPlanHistory[] = []
 
 export function initializeDatabase() {
   if (ordersData.length === 0) {
@@ -544,7 +804,11 @@ export function initializeDatabase() {
     materialsData = [...materials]
     inventoryData = generateSampleInventory(productionsData, ordersData)
     dispatchData = generateSampleDispatch(inventoryData, ordersData)
-    shipmentData = generateSampleShipments(inventoryData, ordersData, dispatchData)
+    businessPlanData = generateSampleBusinessPlans()
+    salesPlanData = generateSampleSalesPlans()
+    shipmentData = generateSampleShipments(inventoryData, ordersData, dispatchData, salesPlanData)
+    salesPlanHistoryData = generateSampleSalesPlanHistory(salesPlanData)
+    shipmentPlanHistoryData = generateSampleShipmentPlanHistory(shipmentData)
 
     console.log("[v0] Database initialized:", {
       orders: ordersData.length,
@@ -553,6 +817,10 @@ export function initializeDatabase() {
       inventory: inventoryData.length,
       dispatch: dispatchData.length,
       shipments: shipmentData.length,
+      businessPlans: businessPlanData.length,
+      salesPlans: salesPlanData.length,
+      salesPlanHistory: salesPlanHistoryData.length,
+      shipmentPlanHistory: shipmentPlanHistoryData.length,
     })
   }
 
@@ -564,6 +832,8 @@ export function initializeDatabase() {
     materials: materialsData,
     bom: bomData,
     shipments: shipmentData,
+    businessPlans: businessPlanData,
+    salesPlans: salesPlanData,
   }
 }
 
@@ -665,6 +935,108 @@ export const db = {
       }
       return null
     },
+  },
+  businessPlans: {
+    getAll: () => businessPlanData,
+    getByYear: (year: number) => businessPlanData.find((bp) => bp.year === year),
+    update: (id: string, data: Partial<BusinessPlan>) => {
+      const index = businessPlanData.findIndex((bp) => bp.id === id)
+      if (index !== -1) {
+        businessPlanData[index] = { ...businessPlanData[index], ...data, updatedAt: new Date().toISOString() }
+        return businessPlanData[index]
+      }
+      return null
+    },
+    create: (plan: BusinessPlan) => {
+      businessPlanData.push(plan)
+      return plan
+    },
+  },
+  salesPlans: {
+    getAll: () => salesPlanData,
+    getByYearMonth: (yearMonth: string) => salesPlanData.filter((sp) => sp.yearMonth === yearMonth),
+    getByYear: (year: number) => salesPlanData.filter((sp) => sp.yearMonth.startsWith(String(year))),
+    getByCustomer: (customer: string) => salesPlanData.filter((sp) => sp.customer === customer),
+    getById: (id: string) => salesPlanData.find((sp) => sp.id === id),
+    update: (id: string, data: Partial<SalesPlan>) => {
+      const index = salesPlanData.findIndex((sp) => sp.id === id)
+      if (index !== -1) {
+        const oldPlan = { ...salesPlanData[index] }
+        salesPlanData[index] = { ...salesPlanData[index], ...data, updatedAt: new Date().toISOString() }
+        
+        // 이력 저장
+        if (data.plannedQuantity !== undefined || data.plannedRevenue !== undefined || data.status !== undefined) {
+          salesPlanHistoryData.push({
+            id: `HIST-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            salesPlanId: id,
+            yearMonth: salesPlanData[index].yearMonth,
+            customer: salesPlanData[index].customer,
+            productCode: salesPlanData[index].productCode,
+            previousQuantity: oldPlan.plannedQuantity,
+            newQuantity: salesPlanData[index].plannedQuantity,
+            previousRevenue: oldPlan.plannedRevenue,
+            newRevenue: salesPlanData[index].plannedRevenue,
+            previousStatus: oldPlan.status,
+            newStatus: salesPlanData[index].status,
+            changedBy: "system", // 실제로는 사용자 정보를 받아야 함
+            createdAt: new Date().toISOString(),
+          })
+        }
+        
+        return salesPlanData[index]
+      }
+      return null
+    },
+    create: (plan: SalesPlan) => {
+      salesPlanData.push(plan)
+      return plan
+    },
+    bulkUpdate: (plans: SalesPlan[]) => {
+      plans.forEach((plan) => {
+        const index = salesPlanData.findIndex((sp) => sp.id === plan.id)
+        if (index !== -1) {
+          const oldPlan = { ...salesPlanData[index] }
+          salesPlanData[index] = { ...plan, updatedAt: new Date().toISOString() }
+          
+          // 이력 저장
+          if (
+            plan.plannedQuantity !== oldPlan.plannedQuantity ||
+            plan.plannedRevenue !== oldPlan.plannedRevenue ||
+            plan.status !== oldPlan.status
+          ) {
+            salesPlanHistoryData.push({
+              id: `HIST-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              salesPlanId: plan.id,
+              yearMonth: plan.yearMonth,
+              customer: plan.customer,
+              productCode: plan.productCode,
+              previousQuantity: oldPlan.plannedQuantity,
+              newQuantity: plan.plannedQuantity,
+              previousRevenue: oldPlan.plannedRevenue,
+              newRevenue: plan.plannedRevenue,
+              previousStatus: oldPlan.status,
+              newStatus: plan.status,
+              changedBy: "system",
+              createdAt: new Date().toISOString(),
+            })
+          }
+        } else {
+          salesPlanData.push({ ...plan, updatedAt: new Date().toISOString() })
+        }
+      })
+      return plans
+    },
+  },
+  salesPlanHistory: {
+    getAll: () => salesPlanHistoryData,
+    getBySalesPlanId: (salesPlanId: string) => salesPlanHistoryData.filter((h) => h.salesPlanId === salesPlanId),
+    getByYearMonth: (yearMonth: string) => salesPlanHistoryData.filter((h) => h.yearMonth === yearMonth),
+    getByCustomer: (customer: string) => salesPlanHistoryData.filter((h) => h.customer === customer),
+  },
+  shipmentPlanHistory: {
+    getAll: () => shipmentPlanHistoryData,
+    getByShipmentId: (shipmentId: string) => shipmentPlanHistoryData.filter((h) => h.shipmentId === shipmentId),
+    getByCustomer: (customer: string) => shipmentPlanHistoryData.filter((h) => h.customer === customer),
   },
 }
 
